@@ -333,21 +333,27 @@ li { margin-bottom: 0.4rem; color: rgba(0,255,65,0.8); }
 #calibHint.visible { opacity: 1; }
 
 /* ===== FULLSCREEN BTN ===== */
+/* Sits below the nav bar — never overlaps hamburger or nav links */
 #fsBtn {
   position: fixed;
-  top: 14px; right: 14px;
-  z-index: 600;
+  top: calc(var(--nav-h) + 10px);
+  right: 14px;
+  z-index: 400;
   background: var(--green-bg);
   border: 1px solid var(--border);
   color: var(--green);
-  font-size: 1.1rem;
-  width: 36px; height: 36px;
+  font-size: 1rem;
+  width: 32px; height: 32px;
   border-radius: var(--radius);
   cursor: pointer;
   display: flex; align-items: center; justify-content: center;
   transition: background var(--transition);
 }
 #fsBtn:hover { background: rgba(0,255,65,0.15); }
+/* On mobile, hide it entirely — fullscreen API is unreliable on mobile browsers */
+@media (max-width: 768px) {
+  #fsBtn { display: none; }
+}
 
 /* ===== CARDS (blog, features, etc.) ===== */
 .card-grid {
