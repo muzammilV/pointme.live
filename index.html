@@ -1,560 +1,269 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
   <title>PointMe.live — Live Online Compass (No App Needed)</title>
-  <meta name="description" content="Free live online compass in your browser. Instant direction using phone sensors. Find North, no installation required." />
-  <meta name="theme-color" content="#0a0a0a" />
-  <meta property="og:title" content="PointMe.live — Live Online Compass" />
-  <meta property="og:description" content="Free live online compass in your browser. No app needed." />
-  <meta property="og:type" content="website" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet" />
-
+  <meta name="description" content="Free live online compass in your browser. Instant direction using phone sensors. Find North, no installation required."/>
+  <meta name="keywords" content="online compass, browser compass, live compass, phone compass, find north, compass tool, free compass"/>
+  <meta name="robots" content="index, follow"/>
+  <link rel="canonical" href="https://pointme.live/"/>
+  <meta property="og:title" content="PointMe.live — Live Online Compass"/>
+  <meta property="og:description" content="Free live online compass in your browser. No app needed."/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:url" content="https://pointme.live/"/>
+  <meta name="theme-color" content="#0a0a0a"/>
+  <link rel="stylesheet" href="styles.css"/>
   <style>
-    /* ===== CSS RESET & BASE ===== */
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    /* Homepage-specific */
+    body { overflow-x: hidden; }
 
-    :root {
-      --green: #00ff41;
-      --green-dim: #00cc33;
-      --green-glow: rgba(0,255,65,0.25);
-      --red: #ff3030;
-      --bg: #0a0a0a;
-      --surface: #111;
-      --border: rgba(0,255,65,0.18);
-      --text-muted: rgba(0,255,65,0.45);
-    }
-
-    html, body {
-      height: 100%;
-      background: var(--bg);
-      color: var(--green);
-      font-family: 'Share Tech Mono', monospace;
-      overflow-x: hidden;
-    }
-
-    body {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      min-height: 100vh;
-      padding: 0;
-      position: relative;
-    }
-
-    /* ===== SCANLINE OVERLAY ===== */
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background: repeating-linear-gradient(
-        0deg,
-        transparent,
-        transparent 2px,
-        rgba(0,0,0,0.07) 2px,
-        rgba(0,0,0,0.07) 4px
-      );
-      pointer-events: none;
-      z-index: 100;
-    }
-
-    /* ===== HEADER ===== */
-    header {
-      width: 100%;
-      text-align: center;
-      padding: 24px 20px 8px;
-      position: relative;
-    }
-
-    .logo {
-      font-family: 'Orbitron', sans-serif;
-      font-size: clamp(1.4rem, 5vw, 2rem);
-      font-weight: 900;
-      letter-spacing: 0.12em;
-      color: var(--green);
-      text-shadow: 0 0 20px var(--green-glow), 0 0 40px rgba(0,255,65,0.1);
-    }
-
-    .logo span { color: var(--text-muted); font-weight: 400; }
-
-    .tagline {
-      font-size: 0.72rem;
-      color: var(--text-muted);
-      letter-spacing: 0.18em;
-      margin-top: 4px;
-      text-transform: uppercase;
-    }
-
-    /* ===== FULLSCREEN BUTTON ===== */
-    #fsBtn {
-      position: fixed;
-      top: 16px; right: 16px;
-      background: rgba(0,255,65,0.07);
-      border: 1px solid var(--border);
-      color: var(--green);
-      font-size: 1.2rem;
-      width: 38px; height: 38px;
-      border-radius: 6px;
-      cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      z-index: 200;
-      transition: background 0.2s;
-    }
-    #fsBtn:hover { background: rgba(0,255,65,0.15); }
-
-    /* ===== MAIN CONTENT ===== */
     main {
       flex: 1;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      width: 100%;
-      padding: 10px 20px 20px;
+      padding: 24px 20px 40px;
       gap: 0;
     }
 
-    /* ===== COMPASS WRAPPER ===== */
-    .compass-wrapper {
-      position: relative;
-      width: min(360px, 88vw);
-      height: min(360px, 88vw);
-      margin: 0 auto;
-    }
-
-    /* Outer ring */
-    .compass-ring {
-      position: absolute;
-      inset: 0;
-      border-radius: 50%;
-      border: 2px solid var(--border);
-      background: radial-gradient(ellipse at center, #0d0d0d 60%, #111 100%);
-      box-shadow:
-        0 0 30px rgba(0,255,65,0.07),
-        0 0 80px rgba(0,255,65,0.04),
-        inset 0 0 40px rgba(0,0,0,0.5);
-    }
-
-    /* Degree tick marks ring */
-    .compass-ticks {
-      position: absolute;
-      inset: 4px;
-      border-radius: 50%;
-    }
-
-    /* Rose SVG — rotates opposite to heading so North stays up */
-    #compassRose {
-      position: absolute;
-      inset: 0;
-      width: 100%; height: 100%;
-      transition: transform 0.15s linear;
-      will-change: transform;
-    }
-
-    /* Needle */
-    #needle {
-      position: absolute;
-      left: 50%; top: 50%;
-      width: 6px;
-      height: 42%;
-      transform-origin: bottom center;
-      transform: translateX(-50%) translateY(-100%) rotate(0deg);
-      transition: transform 0.15s linear;
-      will-change: transform;
-      pointer-events: none;
-    }
-
-    .needle-north {
+    /* Feature row below compass */
+    .features {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-top: 36px;
+      max-width: 700px;
       width: 100%;
-      height: 60%;
-      background: linear-gradient(to top, #cc0000, var(--red));
-      clip-path: polygon(50% 0%, 100% 100%, 50% 80%, 0% 100%);
-      filter: drop-shadow(0 0 6px rgba(255,48,48,0.6));
     }
-
-    .needle-south {
-      width: 100%;
-      height: 40%;
-      background: linear-gradient(to bottom, #888, #ccc);
-      clip-path: polygon(50% 100%, 0% 0%, 50% 20%, 100% 0%);
-    }
-
-    /* Center dot */
-    .center-dot {
-      position: absolute;
-      width: 16px; height: 16px;
-      border-radius: 50%;
-      background: var(--green);
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      box-shadow: 0 0 10px var(--green), 0 0 20px rgba(0,255,65,0.3);
-      z-index: 10;
-    }
-
-    /* ===== DEGREE DISPLAY ===== */
-    .data-panel {
+    .feature-item {
       text-align: center;
-      margin-top: 20px;
+      flex: 1;
+      min-width: 120px;
     }
+    .feature-icon { font-size: 1.5rem; margin-bottom: 4px; }
+    .feature-label { font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); }
 
-    #degreeDisplay {
-      font-family: 'Orbitron', sans-serif;
-      font-size: clamp(3rem, 14vw, 5rem);
-      font-weight: 700;
-      line-height: 1;
-      color: var(--green);
-      text-shadow: 0 0 30px var(--green-glow), 0 0 60px rgba(0,255,65,0.1);
-      letter-spacing: 0.04em;
+    /* Secondary nav row */
+    .compass-variants {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      margin-top: 28px;
     }
-
-    #directionDisplay {
-      font-family: 'Orbitron', sans-serif;
-      font-size: clamp(1.2rem, 5vw, 1.8rem);
-      font-weight: 400;
-      color: var(--green-dim);
-      letter-spacing: 0.3em;
-      margin-top: 4px;
-    }
-
-    /* ===== STATUS / CALIBRATION ===== */
-    #statusMsg {
-      font-size: 0.78rem;
-      color: var(--text-muted);
-      letter-spacing: 0.1em;
-      text-align: center;
-      margin-top: 10px;
-      min-height: 1.2em;
-      max-width: 320px;
-    }
-
-    /* ===== START BUTTON ===== */
-    #startBtn {
-      margin-top: 22px;
-      padding: 14px 40px;
-      font-family: 'Orbitron', sans-serif;
-      font-size: 0.9rem;
-      font-weight: 700;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: var(--bg);
-      background: var(--green);
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      box-shadow: 0 0 20px var(--green-glow), 0 0 40px rgba(0,255,65,0.1);
-      transition: box-shadow 0.2s, transform 0.1s;
-    }
-    #startBtn:hover {
-      box-shadow: 0 0 30px rgba(0,255,65,0.5), 0 0 60px rgba(0,255,65,0.2);
-      transform: translateY(-1px);
-    }
-    #startBtn:active { transform: translateY(0); }
-    #startBtn.hidden { display: none; }
-
-    /* ===== CALIBRATION HINT ===== */
-    #calibHint {
+    .compass-variants a {
       font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 6px 14px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
       color: var(--text-muted);
-      letter-spacing: 0.08em;
-      text-align: center;
-      margin-top: 8px;
-      opacity: 0;
-      transition: opacity 0.5s;
+      transition: all var(--transition);
     }
-    #calibHint.visible { opacity: 1; }
-
-    /* ===== FOOTER ===== */
-    footer {
-      width: 100%;
-      text-align: center;
-      padding: 14px 20px 20px;
-      border-top: 1px solid rgba(0,255,65,0.07);
+    .compass-variants a:hover {
+      border-color: var(--green-dim);
+      color: var(--green);
+      text-decoration: none;
     }
-
-    .footer-disclaimer {
-      font-size: 0.65rem;
-      color: rgba(0,255,65,0.3);
-      letter-spacing: 0.06em;
-      line-height: 1.6;
-      max-width: 400px;
-      margin: 0 auto;
-    }
-
-    /* ===== ADSENSE PLACEHOLDER ===== */
-    /* TODO: Replace with actual AdSense unit */
-    /*
-    .ad-banner {
-      width: 100%;
-      max-width: 360px;
-      height: 100px;
-      margin: 12px auto;
-      background: rgba(0,255,65,0.03);
-      border: 1px dashed rgba(0,255,65,0.1);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 0.6rem; color: rgba(0,255,65,0.2);
-    }
-    */
   </style>
 </head>
 <body>
 
-  <!-- Fullscreen toggle -->
-  <button id="fsBtn" title="Toggle fullscreen" aria-label="Toggle fullscreen">⛶</button>
+<!-- ===== NAV ===== -->
+<nav class="site-nav" role="navigation" aria-label="Main navigation">
+  <a class="nav-logo" href="./index.html">PointMe<span>.live</span></a>
+  <button class="nav-toggle" aria-label="Toggle menu">
+    <span></span><span></span><span></span>
+  </button>
+  <ul class="nav-links">
+    <li><a href="./index.html">Home</a></li>
+    <li><a href="./about.html">About</a></li>
+    <li><a href="./how-to-use.html">How to Use</a></li>
+    <li><a href="./qibla-finder.html">Qibla</a></li>
+    <li><a href="./full-screen.html">Full-Screen</a></li>
+    <li><a href="./blog.html">Blog</a></li>
+    <li><a href="./contact.html">Contact</a></li>
+    <li><a href="./privacy-policy.html">Privacy</a></li>
+    <li><a href="./terms-of-service.html">Terms</a></li>
+  </ul>
+</nav>
 
-  <header>
-    <div class="logo">PointMe<span>.live</span></div>
-    <div class="tagline">Browser Compass · No Install · Free</div>
-  </header>
+<!-- Fullscreen button -->
+<button id="fsBtn" title="Fullscreen" aria-label="Toggle fullscreen">⛶</button>
 
-  <main>
-    <!-- COMPASS -->
-    <div class="compass-wrapper" role="img" aria-label="Compass">
-      <div class="compass-ring"></div>
+<!-- ===== MAIN ===== -->
+<main>
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-logo">PointMe<span>.live</span></div>
+    <div class="hero-tagline">Browser Compass · No Install · Free</div>
+  </div>
 
-      <!-- SVG Compass Rose (rotates opposite to heading) -->
-      <svg id="compassRose" viewBox="0 0 360 360" xmlns="http://www.w3.org/2000/svg">
-        <!-- Degree tick marks -->
-        <g id="ticks" stroke="rgba(0,255,65,0.3)" stroke-linecap="round">
-          <!-- Generated by script below -->
-        </g>
-
-        <!-- Cardinal labels -->
-        <text x="180" y="36" text-anchor="middle" dominant-baseline="middle"
-          font-family="Orbitron,monospace" font-size="22" font-weight="700"
-          fill="#00ff41" filter="url(#glow)">N</text>
-        <text x="180" y="332" text-anchor="middle" dominant-baseline="middle"
-          font-family="Orbitron,monospace" font-size="16" font-weight="400"
-          fill="rgba(0,255,65,0.55)">S</text>
-        <text x="332" y="183" text-anchor="middle" dominant-baseline="middle"
-          font-family="Orbitron,monospace" font-size="16" font-weight="400"
-          fill="rgba(0,255,65,0.55)">E</text>
-        <text x="28" y="183" text-anchor="middle" dominant-baseline="middle"
-          font-family="Orbitron,monospace" font-size="16" font-weight="400"
-          fill="rgba(0,255,65,0.55)">W</text>
-
-        <!-- Intercardinal labels -->
-        <text x="295" y="68" text-anchor="middle" dominant-baseline="middle"
-          font-family="Share Tech Mono,monospace" font-size="11"
-          fill="rgba(0,255,65,0.35)">NE</text>
-        <text x="295" y="295" text-anchor="middle" dominant-baseline="middle"
-          font-family="Share Tech Mono,monospace" font-size="11"
-          fill="rgba(0,255,65,0.35)">SE</text>
-        <text x="68" y="295" text-anchor="middle" dominant-baseline="middle"
-          font-family="Share Tech Mono,monospace" font-size="11"
-          fill="rgba(0,255,65,0.35)">SW</text>
-        <text x="68" y="68" text-anchor="middle" dominant-baseline="middle"
-          font-family="Share Tech Mono,monospace" font-size="11"
-          fill="rgba(0,255,65,0.35)">NW</text>
-
-        <!-- Glow filter -->
-        <defs>
-          <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur stdDeviation="3" result="blur"/>
-            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
-          </filter>
-        </defs>
-      </svg>
-
-      <!-- Needle -->
-      <div id="needle">
-        <div class="needle-north"></div>
-        <div class="needle-south"></div>
-      </div>
-
-      <!-- Center dot -->
-      <div class="center-dot"></div>
+  <!-- Compass -->
+  <div class="compass-wrapper" role="img" aria-label="Live compass">
+    <div class="compass-ring"></div>
+    <svg id="compassRose" viewBox="0 0 360 360" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <filter id="glow">
+          <feGaussianBlur stdDeviation="3" result="b"/>
+          <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+      <g id="compassRose-ticks"></g>
+      <!-- Cardinal labels -->
+      <text x="180" y="34" text-anchor="middle" dominant-baseline="middle"
+        font-family="Orbitron,monospace" font-size="22" font-weight="900"
+        fill="#00ff41" filter="url(#glow)">N</text>
+      <text x="180" y="332" text-anchor="middle" dominant-baseline="middle"
+        font-family="Orbitron,monospace" font-size="16" fill="rgba(0,255,65,0.5)">S</text>
+      <text x="330" y="183" text-anchor="middle" dominant-baseline="middle"
+        font-family="Orbitron,monospace" font-size="16" fill="rgba(0,255,65,0.5)">E</text>
+      <text x="30"  y="183" text-anchor="middle" dominant-baseline="middle"
+        font-family="Orbitron,monospace" font-size="16" fill="rgba(0,255,65,0.5)">W</text>
+      <!-- Intercardinals -->
+      <text x="292" y="68"  text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="11" fill="rgba(0,255,65,0.3)">NE</text>
+      <text x="292" y="295" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="11" fill="rgba(0,255,65,0.3)">SE</text>
+      <text x="68"  y="295" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="11" fill="rgba(0,255,65,0.3)">SW</text>
+      <text x="68"  y="68"  text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="11" fill="rgba(0,255,65,0.3)">NW</text>
+    </svg>
+    <div id="needle">
+      <div class="needle-north"></div>
+      <div class="needle-south"></div>
     </div>
+    <div class="center-dot"></div>
+  </div>
 
-    <!-- DATA -->
-    <div class="data-panel">
-      <div id="degreeDisplay">---°</div>
-      <div id="directionDisplay">---</div>
+  <!-- Data -->
+  <div class="data-panel">
+    <div id="degreeDisplay">---°</div>
+    <div id="directionDisplay">---</div>
+  </div>
+
+  <p id="statusMsg" style="text-align:center;font-size:.78rem;color:var(--text-muted);margin-top:10px;">Press START to activate your compass</p>
+
+  <div class="flex-center mt-16">
+    <button id="startBtn" class="btn btn-primary">⊕ Start Compass</button>
+    <a href="./full-screen.html" class="btn btn-outline">⛶ Full Screen</a>
+  </div>
+
+  <div id="calibHint">↻ Move phone in a figure-8 pattern if reading seems off</div>
+
+  <!-- Compass mode shortcuts -->
+  <div class="compass-variants">
+    <a href="./qibla-finder.html">🕌 Qibla Finder</a>
+    <a href="./hiking.html">🏔 Hiking</a>
+    <a href="./car.html">🚗 Car Compass</a>
+    <a href="./boat.html">⛵ Marine</a>
+  </div>
+
+  <!-- Features -->
+  <div class="features">
+    <div class="feature-item">
+      <div class="feature-icon">📱</div>
+      <div class="feature-label">Works on iOS & Android</div>
     </div>
+    <div class="feature-item">
+      <div class="feature-icon">⚡</div>
+      <div class="feature-label">Instant · No Install</div>
+    </div>
+    <div class="feature-item">
+      <div class="feature-icon">🔒</div>
+      <div class="feature-label">No Data Stored</div>
+    </div>
+    <div class="feature-item">
+      <div class="feature-icon">🆓</div>
+      <div class="feature-label">100% Free</div>
+    </div>
+  </div>
+</main>
 
-    <div id="statusMsg">Press START to activate compass</div>
+<!-- Ad slot — replace with AdSense unit when approved -->
+<!-- <div class="ad-slot">
+  <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXX" data-ad-slot="XXXXXXX" data-ad-format="auto"></ins>
+</div> -->
 
-    <button id="startBtn">⊕ Start Compass</button>
+<!-- ===== FOOTER ===== -->
+<footer class="site-footer">
+  <ul class="footer-nav">
+    <li><a href="./index.html">Home</a></li>
+    <li><a href="./about.html">About</a></li>
+    <li><a href="./how-to-use.html">How to Use</a></li>
+    <li><a href="./qibla-finder.html">Qibla</a></li>
+    <li><a href="./blog.html">Blog</a></li>
+    <li><a href="./contact.html">Contact</a></li>
+    <li><a href="./privacy-policy.html">Privacy Policy</a></li>
+    <li><a href="./terms-of-service.html">Terms</a></li>
+    <li><a href="./disclaimer.html">Disclaimer</a></li>
+  </ul>
+  <p class="footer-disclaimer">Informational tool only. Accuracy depends on device sensors and calibration. Not for navigation-critical use.</p>
+  <p class="footer-copy">© 2026 PointMe.live</p>
+</footer>
 
-    <div id="calibHint">↻ Move phone in a figure-8 pattern if reading seems off</div>
-  </main>
+<script src="scripts.js"></script>
+<script>
+  /* ===== HOMEPAGE COMPASS ===== */
+  const rose    = document.getElementById('compassRose');
+  const needle  = document.getElementById('needle');
+  const degEl   = document.getElementById('degreeDisplay');
+  const dirEl   = document.getElementById('directionDisplay');
+  const statusEl= document.getElementById('statusMsg');
+  const startBtn= document.getElementById('startBtn');
+  const calibEl = document.getElementById('calibHint');
 
-  <!-- AdSense: Insert banner unit here when approved -->
-  <!-- <div class="ad-banner">Advertisement</div> -->
+  let calibTimer = null;
+  let running = false;
 
-  <footer>
-    <p class="footer-disclaimer">
-      Informational tool only. Accuracy depends on device sensors and calibration.<br>
-      Not for navigation-critical use. Always verify your surroundings.
-    </p>
-  </footer>
+  buildCompassRoseTicks('compassRose');
+  initFullscreenBtn('fsBtn');
 
-  <script>
-    /* ===== GENERATE TICK MARKS ===== */
-    (function buildTicks() {
-      const g = document.getElementById('ticks');
-      const cx = 180, cy = 180, r = 158;
-      for (let deg = 0; deg < 360; deg++) {
-        const rad = (deg - 90) * Math.PI / 180;
-        const isMajor = deg % 90 === 0;
-        const isMed = deg % 45 === 0;
-        const isMinor = deg % 10 === 0;
-        if (!isMinor && deg % 5 !== 0) continue;
+  function onHeading(h) {
+    const r = Math.round(h);
+    degEl.textContent = r + '°';
+    dirEl.textContent = headingToDir(r);
+    rose.style.transform = `rotate(${-h}deg)`;
+    // Needle stays fixed (always points North)
+    needle.style.transform = `translateX(-50%) translateY(-100%) rotate(0deg)`;
 
-        const len = isMajor ? 18 : isMed ? 12 : isMinor ? 8 : 4;
-        const opacity = isMajor ? 0.8 : isMed ? 0.5 : isMinor ? 0.3 : 0.15;
-        const x1 = cx + r * Math.cos(rad);
-        const y1 = cy + r * Math.sin(rad);
-        const x2 = cx + (r - len) * Math.cos(rad);
-        const y2 = cy + (r - len) * Math.sin(rad);
-
-        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-        line.setAttribute('x1', x1.toFixed(1));
-        line.setAttribute('y1', y1.toFixed(1));
-        line.setAttribute('x2', x2.toFixed(1));
-        line.setAttribute('y2', y2.toFixed(1));
-        line.setAttribute('stroke-width', isMajor ? 2.5 : isMed ? 1.5 : 1);
-        line.setAttribute('opacity', opacity);
-        g.appendChild(line);
-      }
-    })();
-
-    /* ===== COMPASS LOGIC ===== */
-    const degreeDisplay = document.getElementById('degreeDisplay');
-    const directionDisplay = document.getElementById('directionDisplay');
-    const statusMsg = document.getElementById('statusMsg');
-    const startBtn = document.getElementById('startBtn');
-    const compassRose = document.getElementById('compassRose');
-    const needle = document.getElementById('needle');
-    const calibHint = document.getElementById('calibHint');
-
-    let heading = 0;
-    let isRunning = false;
-    let calibTimer = null;
-
-    /* Direction lookup */
-    const DIRS = ['N','NNE','NE','ENE','E','ESE','SE','SSE',
-                  'S','SSW','SW','WSW','W','WNW','NW','NNW'];
-
-    function headingToDir(h) {
-      return DIRS[Math.round(h / 22.5) % 16];
+    if (!calibTimer) {
+      calibTimer = setTimeout(() => calibEl.classList.add('visible'), 3500);
     }
+  }
 
-    /* Smooth angle interpolation (handles 359→1 wraparound) */
-    let displayAngle = 0;
-    function updateDisplay(newHeading) {
-      // Shortest path
-      let delta = newHeading - displayAngle;
-      if (delta > 180) delta -= 360;
-      if (delta < -180) delta += 360;
-      displayAngle += delta * 0.15; // light lerp for responsiveness
-      if (displayAngle < 0) displayAngle += 360;
-      if (displayAngle >= 360) displayAngle -= 360;
-
-      const rounded = Math.round(newHeading);
-      degreeDisplay.textContent = rounded + '°';
-      directionDisplay.textContent = headingToDir(rounded);
-
-      // Rose rotates opposite to heading so N stays up-ish (rose shows where you're facing)
-      compassRose.style.transform = `rotate(${-newHeading}deg)`;
-      // Needle always points to magnetic North (stays fixed, rose rotates)
-      needle.style.transform = `translateX(-50%) translateY(-100%) rotate(0deg)`;
-    }
-
-    /* Device orientation handler */
-    function onOrientation(e) {
-      let h;
-      if (typeof e.webkitCompassHeading !== 'undefined' && e.webkitCompassHeading !== null) {
-        // iOS: webkitCompassHeading = degrees from magnetic north, clockwise
-        h = e.webkitCompassHeading;
-      } else if (e.alpha !== null) {
-        // Android/others: alpha = rotation around Z axis, counterclockwise from North
-        h = 360 - e.alpha;
-      } else {
-        setStatus('⚠ Compass data unavailable on this device');
-        return;
-      }
-
-      heading = h;
-      updateDisplay(h);
-
-      // Show calibration hint after 3 seconds of running
-      if (!calibTimer) {
-        calibTimer = setTimeout(() => {
-          calibHint.classList.add('visible');
-        }, 3000);
-      }
-    }
-
-    /* Request permission and start */
-    async function startCompass() {
-      if (isRunning) return;
-
-      // iOS 13+ requires explicit permission
-      if (typeof DeviceOrientationEvent !== 'undefined' &&
-          typeof DeviceOrientationEvent.requestPermission === 'function') {
-        try {
-          setStatus('Requesting sensor permission…');
-          const perm = await DeviceOrientationEvent.requestPermission();
-          if (perm !== 'granted') {
-            setStatus('⚠ Permission denied. Enable motion sensors in browser settings.');
-            return;
-          }
-        } catch (err) {
-          setStatus('⚠ Could not request permission: ' + err.message);
-          return;
-        }
-      } else if (typeof DeviceOrientationEvent === 'undefined') {
-        setStatus('⚠ This device does not support orientation sensors.');
-        return;
-      }
-
-      window.addEventListener('deviceorientation', onOrientation, true);
-      isRunning = true;
+  startBtn.addEventListener('click', async () => {
+    if (running) return;
+    const ok = await startCompass({
+      onStatus: (m) => statusEl.textContent = m,
+      onPermissionGranted: () => {
+        startBtn.classList.add('hidden');
+        statusEl.textContent = '● LIVE — magnetic heading';
+        running = true;
+      },
+      onHeading
+    });
+    if (!ok) return;
+    // Non-iOS: auto-fires
+    if (typeof DeviceOrientationEvent.requestPermission !== 'function') {
       startBtn.classList.add('hidden');
-      setStatus('● LIVE — magnetic heading');
+      statusEl.textContent = '● LIVE — magnetic heading';
+      running = true;
     }
+  });
 
-    function setStatus(msg) {
-      statusMsg.textContent = msg;
+  // Non-iOS: try auto-start
+  window.addEventListener('load', () => {
+    if (typeof DeviceOrientationEvent !== 'undefined' &&
+        typeof DeviceOrientationEvent.requestPermission !== 'function') {
+      const test = (e) => {
+        window.removeEventListener('deviceorientation', test, true);
+        if (e.alpha !== null) startBtn.click();
+      };
+      window.addEventListener('deviceorientation', test, true);
     }
-
-    startBtn.addEventListener('click', startCompass);
-
-    /* ===== FULLSCREEN ===== */
-    const fsBtn = document.getElementById('fsBtn');
-    fsBtn.addEventListener('click', () => {
-      if (!document.fullscreenElement) {
-        document.documentElement.requestFullscreen().catch(() => {});
-        fsBtn.textContent = '⊠';
-      } else {
-        document.exitFullscreen();
-        fsBtn.textContent = '⛶';
-      }
-    });
-    document.addEventListener('fullscreenchange', () => {
-      if (!document.fullscreenElement) fsBtn.textContent = '⛶';
-    });
-
-    /* Auto-start on desktop (no permission needed, alpha is available) */
-    window.addEventListener('load', () => {
-      if (typeof DeviceOrientationEvent !== 'undefined' &&
-          typeof DeviceOrientationEvent.requestPermission !== 'function') {
-        // Non-iOS: try auto-start with a small test listener
-        const testFn = (e) => {
-          window.removeEventListener('deviceorientation', testFn, true);
-          if (e.alpha !== null) {
-            startCompass();
-          }
-        };
-        window.addEventListener('deviceorientation', testFn, true);
-        setTimeout(() => {
-          // If no event fired, sensor likely absent (desktop without compass)
-          window.removeEventListener('deviceorientation', testFn, true);
-        }, 1000);
-      }
-    });
-  </script>
+  });
+</script>
 </body>
 </html>
