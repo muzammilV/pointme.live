@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Compass vs GPS: Which Do You Need? | PointMe.live Blog</title>
+  <meta name="description" content="GPS and compass are both navigation tools — but they do fundamentally different things. Learn when to use each and when you need both."/>
+  <meta name="robots" content="index, follow"/>
+  <link rel="canonical" href="https://pointme.live/blog/compass-vs-gps.html"/>
+  <link rel="stylesheet" href="../styles.css"/>
+</head>
+<body>
+<nav class="site-nav" role="navigation">
+  <a class="nav-logo" href="../index.html">PointMe<span>.live</span></a>
+  <button class="nav-toggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+  <ul class="nav-links">
+    <li><a href="../index.html">Home</a></li><li><a href="../about.html">About</a></li>
+    <li><a href="../how-to-use.html">How to Use</a></li><li><a href="../qibla-finder.html">Qibla</a></li>
+    <li><a href="../blog.html">Blog</a></li><li><a href="../contact.html">Contact</a></li>
+  </ul>
+</nav>
+
+<main class="page-content narrow">
+  <a class="back-link" href="../blog.html">← Back to Blog</a>
+  <div class="article-header">
+    <div class="date">February 12, 2026 · 7 min read</div>
+    <h1>Compass vs GPS: Which Do You Need?</h1>
+    <p>People often use "compass" and "GPS" interchangeably when talking about navigation. They shouldn't. They measure entirely different things — and often you need both.</p>
+  </div>
+
+  <div class="article-body">
+
+    <h2>What GPS Actually Does</h2>
+    <p>GPS (Global Positioning System) determines your <em>position</em> — your latitude and longitude on the Earth's surface. It does this by triangulating signals from at least three (ideally four or more) satellites orbiting at ~20,000 km altitude. Your GPS receiver measures the tiny time differences between satellite signals and uses that to compute distance, and then position.</p>
+    <p>What GPS does <strong>not</strong> inherently do: tell you which way you're facing. A GPS receiver just knows where you are. It knows nothing about your orientation unless you're moving — in which case it can infer your heading from the direction of travel (called "course over ground" or COG).</p>
+
+    <h2>What a Compass Does</h2>
+    <p>A compass detects Earth's magnetic field and tells you your <em>orientation</em> — specifically, which direction is magnetic North, from which all other directions are derived. It knows nothing about your position. You could be standing in London or Lagos — the compass doesn't know or care. It just points North.</p>
+    <p>This is fundamentally different from GPS. A compass works independently of satellites, internet connectivity, or battery-intensive radios. A basic magnetic compass continues to work when your phone is in airplane mode with 1% battery — as long as the screen is on.</p>
+
+    <h2>The Key Difference: Position vs Orientation</h2>
+    <p>Think of it this way:</p>
+    <ul>
+      <li><strong>GPS answers:</strong> "Where am I?" (coordinates, altitude)</li>
+      <li><strong>Compass answers:</strong> "Which way am I facing?" (bearing in degrees)</li>
+    </ul>
+    <p>Modern navigation apps like Google Maps combine both: GPS tells the app where you are, and the phone's compass tells it which way you're facing so the map can orient correctly. Remove either piece and navigation degrades significantly.</p>
+
+    <h2>When GPS Wins</h2>
+    <ul>
+      <li><strong>Finding a specific address</strong>: You need coordinates, not a bearing</li>
+      <li><strong>Turn-by-turn navigation</strong>: GPS tracks your movement and recalculates routes</li>
+      <li><strong>Long-distance hiking with waypoints</strong>: GPS can track your trail and mark points of interest</li>
+      <li><strong>Speed measurement</strong>: GPS measures velocity; a compass cannot</li>
+      <li><strong>Elevation tracking</strong>: Many GPS receivers include a barometric altimeter</li>
+    </ul>
+
+    <h2>When a Compass Wins</h2>
+    <ul>
+      <li><strong>No connectivity or satellite signal</strong>: Dense forests, deep valleys, and urban canyons can block GPS. A compass always works</li>
+      <li><strong>Stationary orientation</strong>: When you're standing still and need to know which way is North immediately — GPS can't tell you this until you move</li>
+      <li><strong>Low power situations</strong>: GPS is one of the most battery-hungry phone components. Compass uses far less power</li>
+      <li><strong>Rapid spot-checks</strong>: A compass gives you a bearing instantly; GPS takes time to acquire a satellite fix</li>
+      <li><strong>Religious/directional use</strong>: Qibla, Feng Shui orientation, solar panel alignment — these are compass tasks</li>
+    </ul>
+
+    <h2>When You Need Both</h2>
+    <p>Serious backcountry navigation requires both tools used together: GPS to know your position, compass to take bearings on landmarks and cross-reference with a topo map. This combination — map, compass, GPS — is the gold standard taught in wilderness navigation courses. Each tool provides redundancy if another fails.</p>
+
+    <h2>Phone Compasses vs GPS: Power Trade-offs</h2>
+    <p>On a smartphone, the magnetometer (compass sensor) consumes roughly 0.5–1 mW of power. The GPS radio consumes 50–250 mW — potentially 100× more. In a survival situation where battery conservation matters, running a compass app instead of GPS can meaningfully extend your phone's useful life.</p>
+
+    <div class="info-box">
+      <strong>Quick rule:</strong> Use GPS to find where you are. Use a compass to find which way to go from there.
+    </div>
+
+  </div>
+
+  <hr class="section-divider"/>
+  <div class="flex-center">
+    <a href="../index.html" class="btn btn-primary">Open Compass</a>
+    <a href="../blog.html" class="btn btn-outline">More Articles</a>
+  </div>
+</main>
+
+<!-- Ad slot -->
+<!-- <div class="ad-slot">INSERT ADSENSE UNIT</div> -->
+
+<footer class="site-footer">
+  <ul class="footer-nav">
+    <li><a href="../index.html">Home</a></li><li><a href="../blog.html">Blog</a></li>
+    <li><a href="../privacy-policy.html">Privacy Policy</a></li><li><a href="../terms-of-service.html">Terms</a></li>
+    <li><a href="../disclaimer.html">Disclaimer</a></li>
+  </ul>
+  <p class="footer-disclaimer">Informational tool only. Not for navigation-critical use.</p>
+  <p class="footer-copy">© 2026 PointMe.live</p>
+</footer>
+<script src="../scripts.js"></script>
+</body>
+</html>
