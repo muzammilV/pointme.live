@@ -1,10 +1,560 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>PointMe Live</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>PointMe.live — Live Online Compass (No App Needed)</title>
+  <meta name="description" content="Free live online compass in your browser. Instant direction using phone sensors. Find North, no installation required." />
+  <meta name="theme-color" content="#0a0a0a" />
+  <meta property="og:title" content="PointMe.live — Live Online Compass" />
+  <meta property="og:description" content="Free live online compass in your browser. No app needed." />
+  <meta property="og:type" content="website" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ===== CSS RESET & BASE ===== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green: #00ff41;
+      --green-dim: #00cc33;
+      --green-glow: rgba(0,255,65,0.25);
+      --red: #ff3030;
+      --bg: #0a0a0a;
+      --surface: #111;
+      --border: rgba(0,255,65,0.18);
+      --text-muted: rgba(0,255,65,0.45);
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--green);
+      font-family: 'Share Tech Mono', monospace;
+      overflow-x: hidden;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 0;
+      position: relative;
+    }
+
+    /* ===== SCANLINE OVERLAY ===== */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,0,0,0.07) 2px,
+        rgba(0,0,0,0.07) 4px
+      );
+      pointer-events: none;
+      z-index: 100;
+    }
+
+    /* ===== HEADER ===== */
+    header {
+      width: 100%;
+      text-align: center;
+      padding: 24px 20px 8px;
+      position: relative;
+    }
+
+    .logo {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(1.4rem, 5vw, 2rem);
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      color: var(--green);
+      text-shadow: 0 0 20px var(--green-glow), 0 0 40px rgba(0,255,65,0.1);
+    }
+
+    .logo span { color: var(--text-muted); font-weight: 400; }
+
+    .tagline {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      letter-spacing: 0.18em;
+      margin-top: 4px;
+      text-transform: uppercase;
+    }
+
+    /* ===== FULLSCREEN BUTTON ===== */
+    #fsBtn {
+      position: fixed;
+      top: 16px; right: 16px;
+      background: rgba(0,255,65,0.07);
+      border: 1px solid var(--border);
+      color: var(--green);
+      font-size: 1.2rem;
+      width: 38px; height: 38px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      z-index: 200;
+      transition: background 0.2s;
+    }
+    #fsBtn:hover { background: rgba(0,255,65,0.15); }
+
+    /* ===== MAIN CONTENT ===== */
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      padding: 10px 20px 20px;
+      gap: 0;
+    }
+
+    /* ===== COMPASS WRAPPER ===== */
+    .compass-wrapper {
+      position: relative;
+      width: min(360px, 88vw);
+      height: min(360px, 88vw);
+      margin: 0 auto;
+    }
+
+    /* Outer ring */
+    .compass-ring {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      background: radial-gradient(ellipse at center, #0d0d0d 60%, #111 100%);
+      box-shadow:
+        0 0 30px rgba(0,255,65,0.07),
+        0 0 80px rgba(0,255,65,0.04),
+        inset 0 0 40px rgba(0,0,0,0.5);
+    }
+
+    /* Degree tick marks ring */
+    .compass-ticks {
+      position: absolute;
+      inset: 4px;
+      border-radius: 50%;
+    }
+
+    /* Rose SVG — rotates opposite to heading so North stays up */
+    #compassRose {
+      position: absolute;
+      inset: 0;
+      width: 100%; height: 100%;
+      transition: transform 0.15s linear;
+      will-change: transform;
+    }
+
+    /* Needle */
+    #needle {
+      position: absolute;
+      left: 50%; top: 50%;
+      width: 6px;
+      height: 42%;
+      transform-origin: bottom center;
+      transform: translateX(-50%) translateY(-100%) rotate(0deg);
+      transition: transform 0.15s linear;
+      will-change: transform;
+      pointer-events: none;
+    }
+
+    .needle-north {
+      width: 100%;
+      height: 60%;
+      background: linear-gradient(to top, #cc0000, var(--red));
+      clip-path: polygon(50% 0%, 100% 100%, 50% 80%, 0% 100%);
+      filter: drop-shadow(0 0 6px rgba(255,48,48,0.6));
+    }
+
+    .needle-south {
+      width: 100%;
+      height: 40%;
+      background: linear-gradient(to bottom, #888, #ccc);
+      clip-path: polygon(50% 100%, 0% 0%, 50% 20%, 100% 0%);
+    }
+
+    /* Center dot */
+    .center-dot {
+      position: absolute;
+      width: 16px; height: 16px;
+      border-radius: 50%;
+      background: var(--green);
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      box-shadow: 0 0 10px var(--green), 0 0 20px rgba(0,255,65,0.3);
+      z-index: 10;
+    }
+
+    /* ===== DEGREE DISPLAY ===== */
+    .data-panel {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    #degreeDisplay {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(3rem, 14vw, 5rem);
+      font-weight: 700;
+      line-height: 1;
+      color: var(--green);
+      text-shadow: 0 0 30px var(--green-glow), 0 0 60px rgba(0,255,65,0.1);
+      letter-spacing: 0.04em;
+    }
+
+    #directionDisplay {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(1.2rem, 5vw, 1.8rem);
+      font-weight: 400;
+      color: var(--green-dim);
+      letter-spacing: 0.3em;
+      margin-top: 4px;
+    }
+
+    /* ===== STATUS / CALIBRATION ===== */
+    #statusMsg {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      letter-spacing: 0.1em;
+      text-align: center;
+      margin-top: 10px;
+      min-height: 1.2em;
+      max-width: 320px;
+    }
+
+    /* ===== START BUTTON ===== */
+    #startBtn {
+      margin-top: 22px;
+      padding: 14px 40px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--bg);
+      background: var(--green);
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      box-shadow: 0 0 20px var(--green-glow), 0 0 40px rgba(0,255,65,0.1);
+      transition: box-shadow 0.2s, transform 0.1s;
+    }
+    #startBtn:hover {
+      box-shadow: 0 0 30px rgba(0,255,65,0.5), 0 0 60px rgba(0,255,65,0.2);
+      transform: translateY(-1px);
+    }
+    #startBtn:active { transform: translateY(0); }
+    #startBtn.hidden { display: none; }
+
+    /* ===== CALIBRATION HINT ===== */
+    #calibHint {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      letter-spacing: 0.08em;
+      text-align: center;
+      margin-top: 8px;
+      opacity: 0;
+      transition: opacity 0.5s;
+    }
+    #calibHint.visible { opacity: 1; }
+
+    /* ===== FOOTER ===== */
+    footer {
+      width: 100%;
+      text-align: center;
+      padding: 14px 20px 20px;
+      border-top: 1px solid rgba(0,255,65,0.07);
+    }
+
+    .footer-disclaimer {
+      font-size: 0.65rem;
+      color: rgba(0,255,65,0.3);
+      letter-spacing: 0.06em;
+      line-height: 1.6;
+      max-width: 400px;
+      margin: 0 auto;
+    }
+
+    /* ===== ADSENSE PLACEHOLDER ===== */
+    /* TODO: Replace with actual AdSense unit */
+    /*
+    .ad-banner {
+      width: 100%;
+      max-width: 360px;
+      height: 100px;
+      margin: 12px auto;
+      background: rgba(0,255,65,0.03);
+      border: 1px dashed rgba(0,255,65,0.1);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.6rem; color: rgba(0,255,65,0.2);
+    }
+    */
+  </style>
 </head>
 <body>
-  <h1>Hello World 🚀</h1>
-  <p>pointme.live is live!</p>
+
+  <!-- Fullscreen toggle -->
+  <button id="fsBtn" title="Toggle fullscreen" aria-label="Toggle fullscreen">⛶</button>
+
+  <header>
+    <div class="logo">PointMe<span>.live</span></div>
+    <div class="tagline">Browser Compass · No Install · Free</div>
+  </header>
+
+  <main>
+    <!-- COMPASS -->
+    <div class="compass-wrapper" role="img" aria-label="Compass">
+      <div class="compass-ring"></div>
+
+      <!-- SVG Compass Rose (rotates opposite to heading) -->
+      <svg id="compassRose" viewBox="0 0 360 360" xmlns="http://www.w3.org/2000/svg">
+        <!-- Degree tick marks -->
+        <g id="ticks" stroke="rgba(0,255,65,0.3)" stroke-linecap="round">
+          <!-- Generated by script below -->
+        </g>
+
+        <!-- Cardinal labels -->
+        <text x="180" y="36" text-anchor="middle" dominant-baseline="middle"
+          font-family="Orbitron,monospace" font-size="22" font-weight="700"
+          fill="#00ff41" filter="url(#glow)">N</text>
+        <text x="180" y="332" text-anchor="middle" dominant-baseline="middle"
+          font-family="Orbitron,monospace" font-size="16" font-weight="400"
+          fill="rgba(0,255,65,0.55)">S</text>
+        <text x="332" y="183" text-anchor="middle" dominant-baseline="middle"
+          font-family="Orbitron,monospace" font-size="16" font-weight="400"
+          fill="rgba(0,255,65,0.55)">E</text>
+        <text x="28" y="183" text-anchor="middle" dominant-baseline="middle"
+          font-family="Orbitron,monospace" font-size="16" font-weight="400"
+          fill="rgba(0,255,65,0.55)">W</text>
+
+        <!-- Intercardinal labels -->
+        <text x="295" y="68" text-anchor="middle" dominant-baseline="middle"
+          font-family="Share Tech Mono,monospace" font-size="11"
+          fill="rgba(0,255,65,0.35)">NE</text>
+        <text x="295" y="295" text-anchor="middle" dominant-baseline="middle"
+          font-family="Share Tech Mono,monospace" font-size="11"
+          fill="rgba(0,255,65,0.35)">SE</text>
+        <text x="68" y="295" text-anchor="middle" dominant-baseline="middle"
+          font-family="Share Tech Mono,monospace" font-size="11"
+          fill="rgba(0,255,65,0.35)">SW</text>
+        <text x="68" y="68" text-anchor="middle" dominant-baseline="middle"
+          font-family="Share Tech Mono,monospace" font-size="11"
+          fill="rgba(0,255,65,0.35)">NW</text>
+
+        <!-- Glow filter -->
+        <defs>
+          <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="3" result="blur"/>
+            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+        </defs>
+      </svg>
+
+      <!-- Needle -->
+      <div id="needle">
+        <div class="needle-north"></div>
+        <div class="needle-south"></div>
+      </div>
+
+      <!-- Center dot -->
+      <div class="center-dot"></div>
+    </div>
+
+    <!-- DATA -->
+    <div class="data-panel">
+      <div id="degreeDisplay">---°</div>
+      <div id="directionDisplay">---</div>
+    </div>
+
+    <div id="statusMsg">Press START to activate compass</div>
+
+    <button id="startBtn">⊕ Start Compass</button>
+
+    <div id="calibHint">↻ Move phone in a figure-8 pattern if reading seems off</div>
+  </main>
+
+  <!-- AdSense: Insert banner unit here when approved -->
+  <!-- <div class="ad-banner">Advertisement</div> -->
+
+  <footer>
+    <p class="footer-disclaimer">
+      Informational tool only. Accuracy depends on device sensors and calibration.<br>
+      Not for navigation-critical use. Always verify your surroundings.
+    </p>
+  </footer>
+
+  <script>
+    /* ===== GENERATE TICK MARKS ===== */
+    (function buildTicks() {
+      const g = document.getElementById('ticks');
+      const cx = 180, cy = 180, r = 158;
+      for (let deg = 0; deg < 360; deg++) {
+        const rad = (deg - 90) * Math.PI / 180;
+        const isMajor = deg % 90 === 0;
+        const isMed = deg % 45 === 0;
+        const isMinor = deg % 10 === 0;
+        if (!isMinor && deg % 5 !== 0) continue;
+
+        const len = isMajor ? 18 : isMed ? 12 : isMinor ? 8 : 4;
+        const opacity = isMajor ? 0.8 : isMed ? 0.5 : isMinor ? 0.3 : 0.15;
+        const x1 = cx + r * Math.cos(rad);
+        const y1 = cy + r * Math.sin(rad);
+        const x2 = cx + (r - len) * Math.cos(rad);
+        const y2 = cy + (r - len) * Math.sin(rad);
+
+        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        line.setAttribute('x1', x1.toFixed(1));
+        line.setAttribute('y1', y1.toFixed(1));
+        line.setAttribute('x2', x2.toFixed(1));
+        line.setAttribute('y2', y2.toFixed(1));
+        line.setAttribute('stroke-width', isMajor ? 2.5 : isMed ? 1.5 : 1);
+        line.setAttribute('opacity', opacity);
+        g.appendChild(line);
+      }
+    })();
+
+    /* ===== COMPASS LOGIC ===== */
+    const degreeDisplay = document.getElementById('degreeDisplay');
+    const directionDisplay = document.getElementById('directionDisplay');
+    const statusMsg = document.getElementById('statusMsg');
+    const startBtn = document.getElementById('startBtn');
+    const compassRose = document.getElementById('compassRose');
+    const needle = document.getElementById('needle');
+    const calibHint = document.getElementById('calibHint');
+
+    let heading = 0;
+    let isRunning = false;
+    let calibTimer = null;
+
+    /* Direction lookup */
+    const DIRS = ['N','NNE','NE','ENE','E','ESE','SE','SSE',
+                  'S','SSW','SW','WSW','W','WNW','NW','NNW'];
+
+    function headingToDir(h) {
+      return DIRS[Math.round(h / 22.5) % 16];
+    }
+
+    /* Smooth angle interpolation (handles 359→1 wraparound) */
+    let displayAngle = 0;
+    function updateDisplay(newHeading) {
+      // Shortest path
+      let delta = newHeading - displayAngle;
+      if (delta > 180) delta -= 360;
+      if (delta < -180) delta += 360;
+      displayAngle += delta * 0.15; // light lerp for responsiveness
+      if (displayAngle < 0) displayAngle += 360;
+      if (displayAngle >= 360) displayAngle -= 360;
+
+      const rounded = Math.round(newHeading);
+      degreeDisplay.textContent = rounded + '°';
+      directionDisplay.textContent = headingToDir(rounded);
+
+      // Rose rotates opposite to heading so N stays up-ish (rose shows where you're facing)
+      compassRose.style.transform = `rotate(${-newHeading}deg)`;
+      // Needle always points to magnetic North (stays fixed, rose rotates)
+      needle.style.transform = `translateX(-50%) translateY(-100%) rotate(0deg)`;
+    }
+
+    /* Device orientation handler */
+    function onOrientation(e) {
+      let h;
+      if (typeof e.webkitCompassHeading !== 'undefined' && e.webkitCompassHeading !== null) {
+        // iOS: webkitCompassHeading = degrees from magnetic north, clockwise
+        h = e.webkitCompassHeading;
+      } else if (e.alpha !== null) {
+        // Android/others: alpha = rotation around Z axis, counterclockwise from North
+        h = 360 - e.alpha;
+      } else {
+        setStatus('⚠ Compass data unavailable on this device');
+        return;
+      }
+
+      heading = h;
+      updateDisplay(h);
+
+      // Show calibration hint after 3 seconds of running
+      if (!calibTimer) {
+        calibTimer = setTimeout(() => {
+          calibHint.classList.add('visible');
+        }, 3000);
+      }
+    }
+
+    /* Request permission and start */
+    async function startCompass() {
+      if (isRunning) return;
+
+      // iOS 13+ requires explicit permission
+      if (typeof DeviceOrientationEvent !== 'undefined' &&
+          typeof DeviceOrientationEvent.requestPermission === 'function') {
+        try {
+          setStatus('Requesting sensor permission…');
+          const perm = await DeviceOrientationEvent.requestPermission();
+          if (perm !== 'granted') {
+            setStatus('⚠ Permission denied. Enable motion sensors in browser settings.');
+            return;
+          }
+        } catch (err) {
+          setStatus('⚠ Could not request permission: ' + err.message);
+          return;
+        }
+      } else if (typeof DeviceOrientationEvent === 'undefined') {
+        setStatus('⚠ This device does not support orientation sensors.');
+        return;
+      }
+
+      window.addEventListener('deviceorientation', onOrientation, true);
+      isRunning = true;
+      startBtn.classList.add('hidden');
+      setStatus('● LIVE — magnetic heading');
+    }
+
+    function setStatus(msg) {
+      statusMsg.textContent = msg;
+    }
+
+    startBtn.addEventListener('click', startCompass);
+
+    /* ===== FULLSCREEN ===== */
+    const fsBtn = document.getElementById('fsBtn');
+    fsBtn.addEventListener('click', () => {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+        fsBtn.textContent = '⊠';
+      } else {
+        document.exitFullscreen();
+        fsBtn.textContent = '⛶';
+      }
+    });
+    document.addEventListener('fullscreenchange', () => {
+      if (!document.fullscreenElement) fsBtn.textContent = '⛶';
+    });
+
+    /* Auto-start on desktop (no permission needed, alpha is available) */
+    window.addEventListener('load', () => {
+      if (typeof DeviceOrientationEvent !== 'undefined' &&
+          typeof DeviceOrientationEvent.requestPermission !== 'function') {
+        // Non-iOS: try auto-start with a small test listener
+        const testFn = (e) => {
+          window.removeEventListener('deviceorientation', testFn, true);
+          if (e.alpha !== null) {
+            startCompass();
+          }
+        };
+        window.addEventListener('deviceorientation', testFn, true);
+        setTimeout(() => {
+          // If no event fired, sensor likely absent (desktop without compass)
+          window.removeEventListener('deviceorientation', testFn, true);
+        }, 1000);
+      }
+    });
+  </script>
 </body>
 </html>
