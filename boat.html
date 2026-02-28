@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+  <title>Marine Compass Online — Boat Heading Tool | PointMe.live</title>
+  <meta name="description" content="Free online marine compass for boats. Shows magnetic heading with important notes on magnetic variation. For reference use only."/>
+  <meta name="robots" content="index, follow"/>
+  <link rel="canonical" href="https://pointme.live/boat.html"/>
+  <link rel="stylesheet" href="styles.css"/>
+  <style>
+    main { flex:1;display:flex;flex-direction:column;align-items:center;padding:20px 20px 48px; }
+    .marine-notes { max-width:680px;width:100%;margin-top:28px; }
+  </style>
+</head>
+<body>
+<nav class="site-nav" role="navigation">
+  <a class="nav-logo" href="./index.html">PointMe<span>.live</span></a>
+  <button class="nav-toggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+  <ul class="nav-links">
+    <li><a href="./index.html">Home</a></li><li><a href="./about.html">About</a></li>
+    <li><a href="./how-to-use.html">How to Use</a></li><li><a href="./qibla-finder.html">Qibla</a></li>
+    <li><a href="./full-screen.html">Full-Screen</a></li><li><a href="./blog.html">Blog</a></li>
+    <li><a href="./contact.html">Contact</a></li>
+  </ul>
+</nav>
+<button id="fsBtn" title="Fullscreen">⛶</button>
+
+<main>
+  <div class="hero" style="margin-bottom:8px;">
+    <div class="hero-logo" style="font-size:clamp(1.4rem,5vw,2rem);">⛵ Marine Compass</div>
+    <div class="hero-tagline">Magnetic Heading Reference · Always Verify with Dedicated Marine Equipment</div>
+  </div>
+
+  <div class="info-box" style="max-width:640px;width:100%;margin-bottom:16px;">
+    ⚠ <strong>Maritime Safety Notice:</strong> This tool shows <em>magnetic</em> heading from your phone's sensor. Magnetic variation, vessel interference (engine, electronics), and device limitations mean this is a <strong>reference tool only</strong>. Always use certified marine navigation equipment at sea.
+  </div>
+
+  <div class="compass-wrapper" role="img" aria-label="Marine compass">
+    <div class="compass-ring"></div>
+    <svg id="compassRose" viewBox="0 0 360 360" xmlns="http://www.w3.org/2000/svg">
+      <defs><filter id="glow"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+      <g id="compassRose-ticks"></g>
+      <text x="180" y="34" text-anchor="middle" dominant-baseline="middle" font-family="Orbitron,monospace" font-size="22" font-weight="900" fill="#00ff41" filter="url(#glow)">N</text>
+      <text x="180" y="332" text-anchor="middle" dominant-baseline="middle" font-family="Orbitron,monospace" font-size="16" fill="rgba(0,255,65,0.5)">S</text>
+      <text x="330" y="183" text-anchor="middle" dominant-baseline="middle" font-family="Orbitron,monospace" font-size="16" fill="rgba(0,255,65,0.5)">E</text>
+      <text x="30"  y="183" text-anchor="middle" dominant-baseline="middle" font-family="Orbitron,monospace" font-size="16" fill="rgba(0,255,65,0.5)">W</text>
+    </svg>
+    <div id="needle"><div class="needle-north"></div><div class="needle-south"></div></div>
+    <div class="center-dot"></div>
+  </div>
+
+  <div class="data-panel">
+    <div id="degreeDisplay">---°</div>
+    <div id="directionDisplay">---</div>
+  </div>
+  <p id="statusMsg" style="font-size:.75rem;color:var(--text-muted);text-align:center;margin-top:8px;">Tap Start to activate</p>
+  <div class="flex-center mt-16">
+    <button id="startBtn" class="btn btn-primary">⊕ Start Compass</button>
+  </div>
+  <div id="calibHint">↻ Figure-8 to calibrate</div>
+
+  <div class="marine-notes">
+    <h2>Marine Use Notes</h2>
+    <ul>
+      <li><strong>Magnetic variation</strong>: This reads magnetic north. Check local nautical charts for magnetic variation (declination) in your area to convert to true north.</li>
+      <li><strong>Deviation</strong>: Metal on your vessel — the engine block, steel fittings, electronics — creates its own magnetic field that interferes with phone compass readings.</li>
+      <li><strong>Calibration at sea</strong>: Perform figure-8 calibration with your phone away from the vessel's electrical components and metal structures.</li>
+      <li><strong>GPS cross-check</strong>: When underway, compare your compass bearing with GPS course-over-ground (COG) as a sanity check.</li>
+    </ul>
+  </div>
+</main>
+
+<!-- Ad slot -->
+<!-- <div class="ad-slot">INSERT ADSENSE UNIT</div> -->
+
+<footer class="site-footer">
+  <ul class="footer-nav">
+    <li><a href="./index.html">Home</a></li><li><a href="./about.html">About</a></li>
+    <li><a href="./how-to-use.html">How to Use</a></li><li><a href="./blog.html">Blog</a></li>
+    <li><a href="./contact.html">Contact</a></li><li><a href="./privacy-policy.html">Privacy Policy</a></li>
+    <li><a href="./terms-of-service.html">Terms</a></li><li><a href="./disclaimer.html">Disclaimer</a></li>
+  </ul>
+  <p class="footer-disclaimer">Informational tool only. Accuracy depends on device sensors and calibration. Not for navigation-critical use.</p>
+  <p class="footer-copy">© 2026 PointMe.live</p>
+</footer>
+
+<script src="scripts.js"></script>
+<script>
+  const rose=document.getElementById('compassRose'),needle=document.getElementById('needle'),
+        degEl=document.getElementById('degreeDisplay'),dirEl=document.getElementById('directionDisplay'),
+        statusEl=document.getElementById('statusMsg'),startBtn=document.getElementById('startBtn'),
+        calibEl=document.getElementById('calibHint');
+  let running=false,calibTimer=null;
+  buildCompassRoseTicks('compassRose');
+  initFullscreenBtn('fsBtn');
+  function onHeading(h){
+    const r=Math.round(h);degEl.textContent=r+'°';dirEl.textContent=headingToDir(r);
+    rose.style.transform=`rotate(${-h}deg)`;needle.style.transform=`translateX(-50%) translateY(-100%) rotate(0deg)`;
+    if(!calibTimer)calibTimer=setTimeout(()=>calibEl.classList.add('visible'),3500);
+  }
+  startBtn.addEventListener('click',async()=>{
+    if(running)return;
+    const ok=await startCompass({onStatus:m=>statusEl.textContent=m,
+      onPermissionGranted:()=>{startBtn.classList.add('hidden');statusEl.textContent='● LIVE';running=true;},onHeading});
+    if(ok&&typeof DeviceOrientationEvent.requestPermission!=='function'){startBtn.classList.add('hidden');statusEl.textContent='● LIVE';running=true;}
+  });
+</script>
+</body>
+</html>

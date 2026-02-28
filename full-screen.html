@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+  <title>Full-Screen Compass — PointMe.live</title>
+  <meta name="description" content="Full-screen online compass for your phone or tablet. Maximum visibility, zero clutter."/>
+  <meta name="robots" content="index, follow"/>
+  <link rel="canonical" href="https://pointme.live/full-screen.html"/>
+  <link rel="stylesheet" href="styles.css"/>
+  <style>
+    body { overflow: hidden; }
+
+    .fs-nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      background: rgba(10,10,10,0.7);
+      border-bottom: 1px solid var(--border);
+      z-index: 100;
+      backdrop-filter: blur(8px);
+    }
+    .fs-nav a { font-size: 0.7rem; letter-spacing: 0.1em; color: var(--text-muted); text-transform: uppercase; }
+    .fs-nav a:hover { color: var(--green); text-decoration: none; }
+    .fs-logo { font-family: var(--font-display); font-size: 0.85rem; font-weight: 900; color: var(--green); }
+
+    main {
+      position: fixed;
+      inset: 44px 0 0 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      padding: 16px;
+    }
+
+    .compass-wrapper {
+      width: min(420px, 90vw);
+      height: min(420px, 90vw);
+    }
+
+    #degreeDisplay { font-size: clamp(3.5rem, 16vw, 6rem); }
+    #directionDisplay { font-size: clamp(1.4rem, 5vw, 2rem); letter-spacing: 0.4em; }
+
+    #startBtn { margin-top: 20px; }
+
+    #calibHint { margin-top: 8px; }
+
+    /* Hide footer entirely in fullscreen mode */
+  </style>
+</head>
+<body>
+
+<!-- Minimal nav bar -->
+<div class="fs-nav">
+  <a href="./index.html">← Back</a>
+  <span class="fs-logo">PointMe.live</span>
+  <button id="fsBtn" style="background:none;border:none;color:var(--green);font-size:1.1rem;cursor:pointer;" title="Toggle fullscreen">⛶</button>
+</div>
+
+<main>
+  <div class="compass-wrapper" role="img" aria-label="Full-screen compass">
+    <div class="compass-ring"></div>
+    <svg id="compassRose" viewBox="0 0 360 360" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <filter id="glow">
+          <feGaussianBlur stdDeviation="3" result="b"/>
+          <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+      <g id="compassRose-ticks"></g>
+      <text x="180" y="32" text-anchor="middle" dominant-baseline="middle"
+        font-family="Orbitron,monospace" font-size="26" font-weight="900"
+        fill="#00ff41" filter="url(#glow)">N</text>
+      <text x="180" y="335" text-anchor="middle" dominant-baseline="middle"
+        font-family="Orbitron,monospace" font-size="18" fill="rgba(0,255,65,0.5)">S</text>
+      <text x="333" y="183" text-anchor="middle" dominant-baseline="middle"
+        font-family="Orbitron,monospace" font-size="18" fill="rgba(0,255,65,0.5)">E</text>
+      <text x="27"  y="183" text-anchor="middle" dominant-baseline="middle"
+        font-family="Orbitron,monospace" font-size="18" fill="rgba(0,255,65,0.5)">W</text>
+      <text x="294" y="67"  text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="12" fill="rgba(0,255,65,0.3)">NE</text>
+      <text x="294" y="296" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="12" fill="rgba(0,255,65,0.3)">SE</text>
+      <text x="66"  y="296" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="12" fill="rgba(0,255,65,0.3)">SW</text>
+      <text x="66"  y="67"  text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="12" fill="rgba(0,255,65,0.3)">NW</text>
+    </svg>
+    <div id="needle">
+      <div class="needle-north"></div>
+      <div class="needle-south"></div>
+    </div>
+    <div class="center-dot"></div>
+  </div>
+
+  <div class="data-panel">
+    <div id="degreeDisplay">---°</div>
+    <div id="directionDisplay">---</div>
+  </div>
+
+  <p id="statusMsg" style="font-size:.75rem;color:var(--text-muted);text-align:center;margin-top:8px;">Tap Start to activate</p>
+  <button id="startBtn" class="btn btn-primary">⊕ Start Compass</button>
+  <div id="calibHint">↻ Figure-8 to calibrate</div>
+</main>
+
+<script src="scripts.js"></script>
+<script>
+  const rose    = document.getElementById('compassRose');
+  const needle  = document.getElementById('needle');
+  const degEl   = document.getElementById('degreeDisplay');
+  const dirEl   = document.getElementById('directionDisplay');
+  const statusEl= document.getElementById('statusMsg');
+  const startBtn= document.getElementById('startBtn');
+  const calibEl = document.getElementById('calibHint');
+  let running = false, calibTimer = null;
+
+  buildCompassRoseTicks('compassRose');
+  initFullscreenBtn('fsBtn');
+
+  // Auto-request fullscreen on load
+  window.addEventListener('load', () => {
+    document.documentElement.requestFullscreen().catch(() => {});
+  });
+
+  function onHeading(h) {
+    const r = Math.round(h);
+    degEl.textContent = r + '°';
+    dirEl.textContent = headingToDir(r);
+    rose.style.transform = `rotate(${-h}deg)`;
+    needle.style.transform = `translateX(-50%) translateY(-100%) rotate(0deg)`;
+    if (!calibTimer) calibTimer = setTimeout(() => calibEl.classList.add('visible'), 3500);
+  }
+
+  startBtn.addEventListener('click', async () => {
+    if (running) return;
+    const ok = await startCompass({
+      onStatus: (m) => statusEl.textContent = m,
+      onPermissionGranted: () => {
+        startBtn.classList.add('hidden');
+        statusEl.textContent = '● LIVE';
+        running = true;
+      },
+      onHeading
+    });
+    if (ok && typeof DeviceOrientationEvent.requestPermission !== 'function') {
+      startBtn.classList.add('hidden');
+      statusEl.textContent = '● LIVE';
+      running = true;
+    }
+  });
+
+  window.addEventListener('load', () => {
+    if (typeof DeviceOrientationEvent !== 'undefined' &&
+        typeof DeviceOrientationEvent.requestPermission !== 'function') {
+      const test = (e) => {
+        window.removeEventListener('deviceorientation', test, true);
+        if (e.alpha !== null) startBtn.click();
+      };
+      window.addEventListener('deviceorientation', test, true);
+    }
+  });
+</script>
+</body>
+</html>

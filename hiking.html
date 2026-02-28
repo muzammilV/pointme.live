@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+  <title>Hiking Compass Online — Trail Direction Tool | PointMe.live</title>
+  <meta name="description" content="Free online hiking compass. Use your phone to find direction on the trail. Includes field tips for accurate compass use in the outdoors."/>
+  <meta name="robots" content="index, follow"/>
+  <link rel="canonical" href="https://pointme.live/hiking.html"/>
+  <link rel="stylesheet" href="styles.css"/>
+  <style>
+    main { flex:1; display:flex; flex-direction:column; align-items:center; padding:20px 20px 48px; }
+    .tips-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:14px; width:100%; max-width:760px; margin-top:32px; }
+    .tip-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:16px 18px; }
+    .tip-card h3 { font-size:.85rem; margin-bottom:6px; }
+    .tip-card p { font-size:.78rem; color:var(--text-muted); margin:0; }
+  </style>
+</head>
+<body>
+<nav class="site-nav" role="navigation" aria-label="Main navigation">
+  <a class="nav-logo" href="./index.html">PointMe<span>.live</span></a>
+  <button class="nav-toggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+  <ul class="nav-links">
+    <li><a href="./index.html">Home</a></li><li><a href="./about.html">About</a></li>
+    <li><a href="./how-to-use.html">How to Use</a></li><li><a href="./qibla-finder.html">Qibla</a></li>
+    <li><a href="./full-screen.html">Full-Screen</a></li><li><a href="./blog.html">Blog</a></li>
+    <li><a href="./contact.html">Contact</a></li><li><a href="./privacy-policy.html">Privacy</a></li>
+    <li><a href="./terms-of-service.html">Terms</a></li>
+  </ul>
+</nav>
+<button id="fsBtn" title="Fullscreen">⛶</button>
+
+<main>
+  <div class="hero" style="margin-bottom:8px;">
+    <div class="hero-logo" style="font-size:clamp(1.4rem,5vw,2rem);">🏔 Hiking Compass</div>
+    <div class="hero-tagline">Trail Orientation · No App · Works Offline After Load</div>
+  </div>
+
+  <div class="compass-wrapper" role="img" aria-label="Hiking compass">
+    <div class="compass-ring"></div>
+    <svg id="compassRose" viewBox="0 0 360 360" xmlns="http://www.w3.org/2000/svg">
+      <defs><filter id="glow"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+      <g id="compassRose-ticks"></g>
+      <text x="180" y="34" text-anchor="middle" dominant-baseline="middle" font-family="Orbitron,monospace" font-size="22" font-weight="900" fill="#00ff41" filter="url(#glow)">N</text>
+      <text x="180" y="332" text-anchor="middle" dominant-baseline="middle" font-family="Orbitron,monospace" font-size="16" fill="rgba(0,255,65,0.5)">S</text>
+      <text x="330" y="183" text-anchor="middle" dominant-baseline="middle" font-family="Orbitron,monospace" font-size="16" fill="rgba(0,255,65,0.5)">E</text>
+      <text x="30"  y="183" text-anchor="middle" dominant-baseline="middle" font-family="Orbitron,monospace" font-size="16" fill="rgba(0,255,65,0.5)">W</text>
+    </svg>
+    <div id="needle"><div class="needle-north"></div><div class="needle-south"></div></div>
+    <div class="center-dot"></div>
+  </div>
+
+  <div class="data-panel">
+    <div id="degreeDisplay">---°</div>
+    <div id="directionDisplay">---</div>
+  </div>
+  <p id="statusMsg" style="font-size:.75rem;color:var(--text-muted);text-align:center;margin-top:8px;">Tap Start to activate</p>
+  <div class="flex-center mt-16">
+    <button id="startBtn" class="btn btn-primary">⊕ Start Compass</button>
+  </div>
+  <div id="calibHint">↻ Figure-8 motion to recalibrate</div>
+
+  <!-- Hiking tips -->
+  <div class="tips-grid">
+    <div class="tip-card"><h3>⚠ Metal Interference</h3><p>Keep compass away from belt buckles, trekking poles, or metal packs. Metal distorts the magnetometer reading.</p></div>
+    <div class="tip-card"><h3>📐 Hold It Level</h3><p>Hold your phone horizontally for most accurate readings. Tilting causes significant errors in the compass heading.</p></div>
+    <div class="tip-card"><h3>🌲 Canyon Effect</h3><p>Deep canyons, gorges, or iron-rich rock faces can deflect magnetic north. Cross-check with map landmarks when possible.</p></div>
+    <div class="tip-card"><h3>🔋 Offline Use</h3><p>Once loaded, the compass works without mobile data. Bookmark the page before heading into low-signal areas.</p></div>
+    <div class="tip-card"><h3>🧭 Magnetic vs True</h3><p>This shows magnetic north. In most regions, this differs slightly from true (geographic) north — called magnetic declination.</p></div>
+    <div class="tip-card"><h3>📵 Not for Backcountry</h3><p>For serious backcountry navigation, carry a dedicated baseplate compass and a paper topo map as backups.</p></div>
+  </div>
+</main>
+
+<!-- Ad slot -->
+<!-- <div class="ad-slot">INSERT ADSENSE UNIT</div> -->
+
+<footer class="site-footer">
+  <ul class="footer-nav">
+    <li><a href="./index.html">Home</a></li><li><a href="./about.html">About</a></li>
+    <li><a href="./how-to-use.html">How to Use</a></li><li><a href="./qibla-finder.html">Qibla</a></li>
+    <li><a href="./blog.html">Blog</a></li><li><a href="./contact.html">Contact</a></li>
+    <li><a href="./privacy-policy.html">Privacy Policy</a></li><li><a href="./terms-of-service.html">Terms</a></li>
+    <li><a href="./disclaimer.html">Disclaimer</a></li>
+  </ul>
+  <p class="footer-disclaimer">Informational tool only. Accuracy depends on device sensors and calibration. Not for navigation-critical use.</p>
+  <p class="footer-copy">© 2026 PointMe.live</p>
+</footer>
+
+<script src="scripts.js"></script>
+<script>
+  const rose=document.getElementById('compassRose'),needle=document.getElementById('needle'),
+        degEl=document.getElementById('degreeDisplay'),dirEl=document.getElementById('directionDisplay'),
+        statusEl=document.getElementById('statusMsg'),startBtn=document.getElementById('startBtn'),
+        calibEl=document.getElementById('calibHint');
+  let running=false,calibTimer=null;
+  buildCompassRoseTicks('compassRose');
+  initFullscreenBtn('fsBtn');
+  function onHeading(h){
+    const r=Math.round(h);degEl.textContent=r+'°';dirEl.textContent=headingToDir(r);
+    rose.style.transform=`rotate(${-h}deg)`;needle.style.transform=`translateX(-50%) translateY(-100%) rotate(0deg)`;
+    if(!calibTimer)calibTimer=setTimeout(()=>calibEl.classList.add('visible'),3500);
+  }
+  startBtn.addEventListener('click',async()=>{
+    if(running)return;
+    const ok=await startCompass({onStatus:m=>statusEl.textContent=m,
+      onPermissionGranted:()=>{startBtn.classList.add('hidden');statusEl.textContent='● LIVE';running=true;},onHeading});
+    if(ok&&typeof DeviceOrientationEvent.requestPermission!=='function'){startBtn.classList.add('hidden');statusEl.textContent='● LIVE';running=true;}
+  });
+</script>
+</body>
+</html>

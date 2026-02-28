@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Disclaimer — Compass Accuracy Limitations | PointMe.live</title>
+  <meta name="description" content="Accuracy disclaimer for PointMe.live compass tool. Understand the limitations of browser-based compass readings before use."/>
+  <meta name="robots" content="index, follow"/>
+  <link rel="canonical" href="https://pointme.live/disclaimer.html"/>
+  <link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+<nav class="site-nav" role="navigation">
+  <a class="nav-logo" href="./index.html">PointMe<span>.live</span></a>
+  <button class="nav-toggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+  <ul class="nav-links">
+    <li><a href="./index.html">Home</a></li><li><a href="./about.html">About</a></li>
+    <li><a href="./how-to-use.html">How to Use</a></li><li><a href="./qibla-finder.html">Qibla</a></li>
+    <li><a href="./blog.html">Blog</a></li><li><a href="./contact.html">Contact</a></li>
+    <li><a href="./privacy-policy.html">Privacy</a></li><li><a href="./terms-of-service.html">Terms</a></li>
+  </ul>
+</nav>
+
+<main class="page-content narrow">
+  <span class="badge">Legal</span>
+  <h1>Disclaimer</h1>
+  <p style="color:var(--text-muted);font-size:.8rem;">Last updated: February 1, 2026</p>
+  <hr class="section-divider"/>
+
+  <div class="info-box">
+    <strong>Summary:</strong> PointMe.live is an informational tool only. Accuracy depends on your device's hardware and environment. Do not use it for safety-critical navigation.
+  </div>
+
+  <h2>Compass Accuracy Limitations</h2>
+  <p>The compass readings displayed by PointMe.live are derived from your smartphone's built-in magnetometer sensor. While modern phone magnetometers are capable of good accuracy under ideal conditions, the following factors can significantly affect readings:</p>
+  <ul>
+    <li><strong>Device hardware quality:</strong> Budget phones typically have lower-quality sensors with larger error margins than premium devices</li>
+    <li><strong>Calibration state:</strong> An uncalibrated sensor can produce readings that are off by 20° or more</li>
+    <li><strong>Magnetic interference:</strong> Metal objects, electronics, vehicle dashboards, and magnetic accessories near the phone can severely distort readings</li>
+    <li><strong>Physical environment:</strong> Buildings with steel reinforcement, underground structures, and certain geological formations can interfere with Earth's local magnetic field</li>
+    <li><strong>Tilt and orientation:</strong> Holding the phone at an angle introduces tilt-compensation errors</li>
+    <li><strong>Software implementation:</strong> Browser API implementations vary across devices and operating systems</li>
+  </ul>
+
+  <h2>Magnetic vs True North</h2>
+  <p>This tool displays <strong>magnetic North</strong>, not true geographic North. The difference (magnetic declination) varies by location and can be up to 20° or more in some regions. For uses requiring true North, apply the appropriate declination correction for your location. See our article on <a href="./blog/magnetic-declination-explained.html">magnetic declination</a>.</p>
+
+  <h2>Not for Safety-Critical Use</h2>
+  <p>PointMe.live is explicitly <strong>not suitable</strong> for:</p>
+  <ul>
+    <li>Aviation navigation</li>
+    <li>Maritime navigation at sea</li>
+    <li>Backcountry wilderness navigation where getting lost could be life-threatening</li>
+    <li>Professional surveying or land measurement</li>
+    <li>Any situation where an incorrect heading could result in injury or harm to yourself or others</li>
+  </ul>
+  <p>For these uses, please employ certified navigation instruments and consult qualified professionals.</p>
+
+  <h2>No Warranties</h2>
+  <p>PointMe.live provides this Service without warranty of any kind — express, implied, or statutory — including but not limited to warranties of merchantability, fitness for a particular purpose, or accuracy. We make no representations that the compass readings are accurate, complete, or up-to-date.</p>
+
+  <h2>Limitation of Liability</h2>
+  <p>Under no circumstances shall PointMe.live, its owners, operators, contributors, or affiliates be liable for any loss, injury, or damage of any kind arising from your use of or reliance on this Service, including but not limited to navigation errors, property damage, personal injury, or death.</p>
+
+  <h2>User Responsibility</h2>
+  <p>By using this Service, you acknowledge that you understand its limitations and accept sole responsibility for any decisions made based on compass readings provided. Always verify directional information through multiple sources when accuracy is important.</p>
+
+  <hr class="section-divider"/>
+  <p>See also: <a href="./privacy-policy.html">Privacy Policy</a> · <a href="./terms-of-service.html">Terms of Service</a> · <a href="./how-to-use.html">How to Use</a></p>
+</main>
+
+<footer class="site-footer">
+  <ul class="footer-nav">
+    <li><a href="./index.html">Home</a></li><li><a href="./about.html">About</a></li>
+    <li><a href="./blog.html">Blog</a></li><li><a href="./contact.html">Contact</a></li>
+    <li><a href="./privacy-policy.html">Privacy Policy</a></li><li><a href="./terms-of-service.html">Terms</a></li>
+    <li><a href="./disclaimer.html">Disclaimer</a></li>
+  </ul>
+  <p class="footer-disclaimer">Informational tool only. Accuracy depends on device sensors and calibration. Not for navigation-critical use.</p>
+  <p class="footer-copy">© 2026 PointMe.live</p>
+</footer>
+<script src="scripts.js"></script>
+</body>
+</html>

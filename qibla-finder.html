@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+  <title>Qibla Finder — Find Mecca Direction Online | PointMe.live</title>
+  <meta name="description" content="Free online Qibla direction finder. Uses your GPS location to calculate the exact bearing toward Mecca. Works in any mobile browser, no app needed."/>
+  <meta name="robots" content="index, follow"/>
+  <link rel="canonical" href="https://pointme.live/qibla-finder.html"/>
+  <link rel="stylesheet" href="styles.css"/>
+  <style>
+    main {
+      flex:1; display:flex; flex-direction:column;
+      align-items:center; justify-content:center;
+      padding: 24px 20px 48px; gap:0;
+    }
+
+    /* Qibla arrow overlay */
+    #qiblaArrow {
+      position: absolute;
+      left: 50%; top: 50%;
+      width: 8px;
+      height: 44%;
+      transform-origin: bottom center;
+      transform: translateX(-50%) translateY(-100%) rotate(0deg);
+      transition: transform 0.15s linear;
+      pointer-events: none;
+      z-index: 5;
+    }
+    .qibla-tip {
+      width: 100%;
+      height: 60%;
+      background: linear-gradient(to top, #cc8800, #ffcc00);
+      clip-path: polygon(50% 0%, 100% 100%, 50% 78%, 0% 100%);
+      filter: drop-shadow(0 0 6px rgba(255,200,0,0.6));
+    }
+    .qibla-tail {
+      width: 100%;
+      height: 40%;
+      background: rgba(255,200,0,0.3);
+      clip-path: polygon(50% 100%, 0% 0%, 50% 22%, 100% 0%);
+    }
+
+    .legend {
+      display: flex;
+      gap: 20px;
+      margin-top: 14px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+    .legend-dot {
+      width: 12px; height: 12px;
+      border-radius: 50%;
+    }
+    .dot-red { background: var(--red); }
+    .dot-yellow { background: #ffcc00; }
+
+    #qiblaDeg {
+      font-family: var(--font-display);
+      font-size: clamp(1.5rem, 6vw, 2.2rem);
+      font-weight: 700;
+      color: #ffcc00;
+      text-shadow: 0 0 20px rgba(255,200,0,0.3);
+      margin-top: 4px;
+      letter-spacing: 0.08em;
+    }
+    #qiblaLabel {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+
+    .location-info {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      margin-top: 10px;
+      text-align: center;
+      letter-spacing: 0.08em;
+    }
+  </style>
+</head>
+<body>
+
+<nav class="site-nav" role="navigation" aria-label="Main navigation">
+  <a class="nav-logo" href="./index.html">PointMe<span>.live</span></a>
+  <button class="nav-toggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+  <ul class="nav-links">
+    <li><a href="./index.html">Home</a></li>
+    <li><a href="./about.html">About</a></li>
+    <li><a href="./how-to-use.html">How to Use</a></li>
+    <li><a href="./qibla-finder.html">Qibla</a></li>
+    <li><a href="./full-screen.html">Full-Screen</a></li>
+    <li><a href="./blog.html">Blog</a></li>
+    <li><a href="./contact.html">Contact</a></li>
+    <li><a href="./privacy-policy.html">Privacy</a></li>
+    <li><a href="./terms-of-service.html">Terms</a></li>
+  </ul>
+</nav>
+<button id="fsBtn" title="Fullscreen" aria-label="Toggle fullscreen">⛶</button>
+
+<main>
+  <div class="hero" style="margin-bottom:4px;">
+    <div class="hero-logo" style="font-size:clamp(1.4rem,5vw,2rem);">🕌 Qibla Finder</div>
+    <div class="hero-tagline">Direction toward Mecca · Uses GPS + Compass</div>
+  </div>
+
+  <!-- Compass with Qibla overlay -->
+  <div class="compass-wrapper" role="img" aria-label="Qibla compass">
+    <div class="compass-ring"></div>
+    <svg id="compassRose" viewBox="0 0 360 360" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <filter id="glow">
+          <feGaussianBlur stdDeviation="3" result="b"/>
+          <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+      <g id="compassRose-ticks"></g>
+      <text x="180" y="34" text-anchor="middle" dominant-baseline="middle"
+        font-family="Orbitron,monospace" font-size="22" font-weight="900"
+        fill="#00ff41" filter="url(#glow)">N</text>
+      <text x="180" y="332" text-anchor="middle" dominant-baseline="middle"
+        font-family="Orbitron,monospace" font-size="16" fill="rgba(0,255,65,0.5)">S</text>
+      <text x="330" y="183" text-anchor="middle" dominant-baseline="middle"
+        font-family="Orbitron,monospace" font-size="16" fill="rgba(0,255,65,0.5)">E</text>
+      <text x="30"  y="183" text-anchor="middle" dominant-baseline="middle"
+        font-family="Orbitron,monospace" font-size="16" fill="rgba(0,255,65,0.5)">W</text>
+    </svg>
+
+    <!-- Standard red/white needle -->
+    <div id="needle">
+      <div class="needle-north"></div>
+      <div class="needle-south"></div>
+    </div>
+
+    <!-- Qibla gold arrow -->
+    <div id="qiblaArrow">
+      <div class="qibla-tip"></div>
+      <div class="qibla-tail"></div>
+    </div>
+
+    <div class="center-dot"></div>
+  </div>
+
+  <!-- Qibla data -->
+  <div class="data-panel">
+    <div id="degreeDisplay">---°</div>
+    <div id="directionDisplay">Compass</div>
+  </div>
+  <div id="qiblaDeg">--- Qibla</div>
+  <div id="qiblaLabel">Calculating your direction to Mecca…</div>
+  <p id="statusMsg" style="text-align:center;font-size:.75rem;color:var(--text-muted);margin-top:8px;">
+    Tap Start to activate GPS + compass
+  </p>
+
+  <div class="flex-center mt-16">
+    <button id="startBtn" class="btn btn-primary">⊕ Start Qibla Finder</button>
+  </div>
+
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot dot-red"></div> Red = Magnetic North</div>
+    <div class="legend-item"><div class="legend-dot dot-yellow"></div> Gold = Qibla direction</div>
+  </div>
+
+  <div class="location-info" id="locationInfo"></div>
+  <div id="calibHint">↻ Figure-8 motion to recalibrate</div>
+</main>
+
+<div style="max-width:680px;margin:0 auto;padding:0 24px 32px;">
+  <div class="info-box">
+    <strong>How it works:</strong> Your GPS coordinates are used to calculate the <em>great-circle bearing</em> from your position to the Kaaba in Mecca (21.4225°N, 39.8262°E). The gold arrow rotates to point in that direction. The red needle always points magnetic North.
+  </div>
+</div>
+
+<!-- Ad slot -->
+<!-- <div class="ad-slot">INSERT ADSENSE UNIT</div> -->
+
+<footer class="site-footer">
+  <ul class="footer-nav">
+    <li><a href="./index.html">Home</a></li>
+    <li><a href="./about.html">About</a></li>
+    <li><a href="./how-to-use.html">How to Use</a></li>
+    <li><a href="./qibla-finder.html">Qibla</a></li>
+    <li><a href="./blog.html">Blog</a></li>
+    <li><a href="./contact.html">Contact</a></li>
+    <li><a href="./privacy-policy.html">Privacy Policy</a></li>
+    <li><a href="./terms-of-service.html">Terms</a></li>
+    <li><a href="./disclaimer.html">Disclaimer</a></li>
+  </ul>
+  <p class="footer-disclaimer">Informational tool only. Accuracy depends on device sensors and calibration. Not for navigation-critical use.</p>
+  <p class="footer-copy">© 2026 PointMe.live</p>
+</footer>
+
+<script src="scripts.js"></script>
+<script>
+  const rose       = document.getElementById('compassRose');
+  const needle     = document.getElementById('needle');
+  const qiblaArrow = document.getElementById('qiblaArrow');
+  const degEl      = document.getElementById('degreeDisplay');
+  const dirEl      = document.getElementById('directionDisplay');
+  const qiblaDegEl = document.getElementById('qiblaDeg');
+  const qiblaLabel = document.getElementById('qiblaLabel');
+  const statusEl   = document.getElementById('statusMsg');
+  const startBtn   = document.getElementById('startBtn');
+  const locInfo    = document.getElementById('locationInfo');
+  const calibEl    = document.getElementById('calibHint');
+
+  let qiblaBearing = null;
+  let calibTimer = null;
+
+  buildCompassRoseTicks('compassRose');
+  initFullscreenBtn('fsBtn');
+
+  function onHeading(h) {
+    const r = Math.round(h);
+    degEl.textContent = r + '°';
+    dirEl.textContent = headingToDir(r);
+    // Rose rotates opposite to heading
+    rose.style.transform = `rotate(${-h}deg)`;
+    // Standard needle stays fixed pointing North
+    needle.style.transform = `translateX(-50%) translateY(-100%) rotate(0deg)`;
+
+    if (qiblaBearing !== null) {
+      // Qibla arrow must point to qiblaBearing relative to current heading
+      // Offset = qiblaBearing - current heading (rose rotation corrects for heading)
+      // Since rose rotates -h, the arrow should be at qiblaBearing in world space
+      qiblaArrow.style.transform = `translateX(-50%) translateY(-100%) rotate(${qiblaBearing - h}deg)`;
+    }
+
+    if (!calibTimer) calibTimer = setTimeout(() => calibEl.classList.add('visible'), 3500);
+  }
+
+  function getLocation() {
+    return new Promise((resolve, reject) => {
+      if (!navigator.geolocation) {
+        reject(new Error('Geolocation not supported'));
+        return;
+      }
+      navigator.geolocation.getCurrentPosition(resolve, reject, {
+        enableHighAccuracy: true,
+        timeout: 10000
+      });
+    });
+  }
+
+  startBtn.addEventListener('click', async () => {
+    statusEl.textContent = 'Getting your location…';
+
+    // Step 1: Get GPS
+    let pos;
+    try {
+      pos = await getLocation();
+    } catch (e) {
+      statusEl.textContent = '⚠ Location access denied. Please allow location to use Qibla finder.';
+      return;
+    }
+
+    const { latitude, longitude } = pos.coords;
+    qiblaBearing = calcQibla(latitude, longitude);
+
+    locInfo.textContent = `Your location: ${latitude.toFixed(4)}°, ${longitude.toFixed(4)}°`;
+    qiblaDegEl.textContent = Math.round(qiblaBearing) + '° Qibla';
+    qiblaLabel.textContent = `Direction to Mecca from your location`;
+
+    // Step 2: Start compass
+    statusEl.textContent = 'Starting compass…';
+    const ok = await startCompass({
+      onStatus: (m) => statusEl.textContent = m,
+      onPermissionGranted: () => {
+        startBtn.classList.add('hidden');
+        statusEl.textContent = '● LIVE — align gold arrow toward Mecca';
+      },
+      onHeading
+    });
+
+    if (ok && typeof DeviceOrientationEvent.requestPermission !== 'function') {
+      startBtn.classList.add('hidden');
+      statusEl.textContent = '● LIVE — align gold arrow toward Mecca';
+    }
+  });
+</script>
+</body>
+</html>

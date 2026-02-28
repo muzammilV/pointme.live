@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://pointme.live/sitemap.xml
