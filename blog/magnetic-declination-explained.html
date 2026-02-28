@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Magnetic Declination Explained Simply | PointMe.live Blog</title>
+  <meta name="description" content="What is magnetic declination and why does your compass point slightly away from true North? A clear, simple explanation with real-world examples."/>
+  <meta name="robots" content="index, follow"/>
+  <link rel="canonical" href="https://pointme.live/blog/magnetic-declination-explained.html"/>
+  <link rel="stylesheet" href="../styles.css"/>
+</head>
+<body>
+<nav class="site-nav" role="navigation">
+  <a class="nav-logo" href="../index.html">PointMe<span>.live</span></a>
+  <button class="nav-toggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+  <ul class="nav-links">
+    <li><a href="../index.html">Home</a></li><li><a href="../about.html">About</a></li>
+    <li><a href="../how-to-use.html">How to Use</a></li><li><a href="../qibla-finder.html">Qibla</a></li>
+    <li><a href="../blog.html">Blog</a></li><li><a href="../contact.html">Contact</a></li>
+  </ul>
+</nav>
+
+<main class="page-content narrow">
+  <a class="back-link" href="../blog.html">← Back to Blog</a>
+  <div class="article-header">
+    <div class="date">February 4, 2026 · 6 min read</div>
+    <h1>Magnetic Declination Explained</h1>
+    <p>Your compass doesn't point to the North Pole. It never has. Here's why — and why it usually doesn't matter, but sometimes very much does.</p>
+  </div>
+
+  <div class="article-body">
+
+    <h2>Two Norths</h2>
+    <p>There are actually two "Norths" that matter in navigation:</p>
+    <ul>
+      <li><strong>True North (Geographic North):</strong> The direction toward Earth's geographic North Pole — the axis around which the Earth spins. This is what maps and GPS use.</li>
+      <li><strong>Magnetic North:</strong> The direction a compass needle points — toward Earth's magnetic north pole, where the planet's magnetic field lines converge.</li>
+    </ul>
+    <p>These two points are not in the same place. As of 2026, magnetic North is located somewhere in the Arctic Ocean, roughly 500 km south of true geographic North — and it moves every year.</p>
+
+    <h2>What Is Magnetic Declination?</h2>
+    <p>Magnetic declination (also called magnetic variation) is the angle between true North and magnetic North at a given location. This angle varies:</p>
+    <ul>
+      <li><strong>By location:</strong> In much of the eastern United States, declination is about 10°W (magnetic North is 10 degrees west of true North). In parts of the Pacific Northwest, it can be nearly 17°E.</li>
+      <li><strong>By year:</strong> Earth's magnetic pole drifts steadily. Declination in any given location changes by up to 0.1–0.3° per year, meaning nautical charts and topographic maps print their declination date and require periodic correction.</li>
+    </ul>
+
+    <h2>Real-World Examples</h2>
+    <p>Let's say you're hiking in Maine, USA, where declination is approximately 14°W. If your compass says you're heading 0° (magnetic North), you're actually heading 14° east of true North. Over a 10-kilometer hike, that 14° error translates to about 2.5 km of drift — enough to miss your intended destination significantly.</p>
+    <p>Conversely, in parts of Australia, declination can be as high as 12°E — meaning compass North is east of true North, and the correction goes the other way.</p>
+    <p>Fortunately, in most of central Europe, East Africa, and Southeast Asia, declination is relatively small (under 5°) — small enough that casual navigation can ignore it entirely.</p>
+
+    <h2>Does Your Phone Automatically Correct for Declination?</h2>
+    <p>It depends on the app and settings:</p>
+    <ul>
+      <li><strong>Apple Compass app:</strong> Has a "Use True North" setting in iOS Compass settings. When enabled (and Location Services is on), it applies the local declination correction and shows true North. When disabled, it shows magnetic North.</li>
+      <li><strong>Google Maps:</strong> Always uses true North for the map, applying declination automatically. The compass indicator on the map shows true North direction.</li>
+      <li><strong>PointMe.live and other browser compasses:</strong> The DeviceOrientation API returns raw magnetic heading. <code>webkitCompassHeading</code> on iOS reflects Apple's true-North correction if that setting is on. On Android, raw alpha is returned without declination correction in most cases.</li>
+    </ul>
+
+    <div class="info-box">
+      <strong>Practical note:</strong> For most everyday uses — finding Qibla, orienting a room, casual navigation — the difference between magnetic and true North is negligible. For serious surveying, land navigation, or marine piloting, always account for declination.
+    </div>
+
+    <h2>How to Find Your Local Declination</h2>
+    <p>NOAA (National Oceanic and Atmospheric Administration) maintains a free declination calculator at ngdc.noaa.gov. Enter your location and get the current magnetic declination value with its annual rate of change.</p>
+
+    <h2>How to Apply Declination Manually</h2>
+    <p>If you're using a compass that shows magnetic North and need true North:</p>
+    <ul>
+      <li><strong>East declination:</strong> Add the declination value to your magnetic bearing</li>
+      <li><strong>West declination:</strong> Subtract the declination value from your magnetic bearing</li>
+    </ul>
+    <p>Memory aid: "Declination East, compass least (subtract). Declination West, compass best (add)." This mnemonic is used in traditional compass navigation courses worldwide.</p>
+
+    <h2>The Moving Magnetic Pole</h2>
+    <p>Earth's magnetic north pole is accelerating. It moved about 10 km/year in the mid-20th century; by the 2010s it was moving 50+ km/year, drifting generally toward Siberia. Scientists believe this reflects convective flows in Earth's liquid outer core. This drift is why magnetic declination values change over time, and why navigation charts carry a "date of magnetic information" note.</p>
+    <p>For context: if you used a 1980 nautical chart without updating the magnetic variation correction, you could introduce a navigation error of several degrees — potentially dangerous in coastal waters with rocks and shoals.</p>
+
+  </div>
+
+  <hr class="section-divider"/>
+  <div class="flex-center">
+    <a href="../index.html" class="btn btn-primary">Open the Compass</a>
+    <a href="../blog.html" class="btn btn-outline">More Articles</a>
+  </div>
+</main>
+
+<!-- Ad slot -->
+<!-- <div class="ad-slot">INSERT ADSENSE UNIT</div> -->
+
+<footer class="site-footer">
+  <ul class="footer-nav">
+    <li><a href="../index.html">Home</a></li><li><a href="../blog.html">Blog</a></li>
+    <li><a href="../privacy-policy.html">Privacy Policy</a></li><li><a href="../terms-of-service.html">Terms</a></li>
+    <li><a href="../disclaimer.html">Disclaimer</a></li>
+  </ul>
+  <p class="footer-disclaimer">Informational tool only. Not for navigation-critical use.</p>
+  <p class="footer-copy">© 2026 PointMe.live</p>
+</footer>
+<script src="../scripts.js"></script>
+</body>
+</html>
