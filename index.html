@@ -113,22 +113,34 @@
           <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
         </filter>
       </defs>
+      <!-- Tick marks group -->
       <g id="compassRose-ticks"></g>
-      <!-- Cardinal labels -->
-      <text x="180" y="34" text-anchor="middle" dominant-baseline="middle"
-        font-family="Orbitron,monospace" font-size="22" font-weight="900"
+      <!-- Cardinal & intercardinal labels — placed using transform so they
+           render correctly regardless of device/browser SVG implementation -->
+      <text transform="translate(180,36)" text-anchor="middle" dominant-baseline="middle"
+        font-family="Orbitron,sans-serif" font-size="22" font-weight="900"
         fill="#00ff41" filter="url(#glow)">N</text>
-      <text x="180" y="332" text-anchor="middle" dominant-baseline="middle"
-        font-family="Orbitron,monospace" font-size="16" fill="rgba(0,255,65,0.5)">S</text>
-      <text x="330" y="183" text-anchor="middle" dominant-baseline="middle"
-        font-family="Orbitron,monospace" font-size="16" fill="rgba(0,255,65,0.5)">E</text>
-      <text x="30"  y="183" text-anchor="middle" dominant-baseline="middle"
-        font-family="Orbitron,monospace" font-size="16" fill="rgba(0,255,65,0.5)">W</text>
-      <!-- Intercardinals -->
-      <text x="292" y="68"  text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="11" fill="rgba(0,255,65,0.3)">NE</text>
-      <text x="292" y="295" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="11" fill="rgba(0,255,65,0.3)">SE</text>
-      <text x="68"  y="295" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="11" fill="rgba(0,255,65,0.3)">SW</text>
-      <text x="68"  y="68"  text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="11" fill="rgba(0,255,65,0.3)">NW</text>
+      <text transform="translate(180,330)" text-anchor="middle" dominant-baseline="middle"
+        font-family="Orbitron,sans-serif" font-size="16"
+        fill="rgba(0,255,65,0.55)">S</text>
+      <text transform="translate(328,183)" text-anchor="middle" dominant-baseline="middle"
+        font-family="Orbitron,sans-serif" font-size="16"
+        fill="rgba(0,255,65,0.55)">E</text>
+      <text transform="translate(32,183)" text-anchor="middle" dominant-baseline="middle"
+        font-family="Orbitron,sans-serif" font-size="16"
+        fill="rgba(0,255,65,0.55)">W</text>
+      <text transform="translate(291,69)" text-anchor="middle" dominant-baseline="middle"
+        font-family="Orbitron,sans-serif" font-size="10"
+        fill="rgba(0,255,65,0.32)">NE</text>
+      <text transform="translate(291,294)" text-anchor="middle" dominant-baseline="middle"
+        font-family="Orbitron,sans-serif" font-size="10"
+        fill="rgba(0,255,65,0.32)">SE</text>
+      <text transform="translate(69,294)" text-anchor="middle" dominant-baseline="middle"
+        font-family="Orbitron,sans-serif" font-size="10"
+        fill="rgba(0,255,65,0.32)">SW</text>
+      <text transform="translate(69,69)" text-anchor="middle" dominant-baseline="middle"
+        font-family="Orbitron,sans-serif" font-size="10"
+        fill="rgba(0,255,65,0.32)">NW</text>
     </svg>
     <div id="needle">
       <div class="needle-north"></div>
