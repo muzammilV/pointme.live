@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>How Accurate Are Phone Compasses? | PointMe.live Blog</title>
+  <meta name="description" content="A deep dive into phone compass accuracy. How magnetometer sensors work, typical accuracy ranges, and what causes errors in your phone's compass reading."/>
+  <meta name="robots" content="index, follow"/>
+  <link rel="canonical" href="https://pointme.live/blog/how-accurate-are-phone-compasses.html"/>
+  <link rel="stylesheet" href="../styles.css"/>
+</head>
+<body>
+
+<nav class="site-nav" role="navigation" aria-label="Main navigation">
+  <a class="nav-logo" href="../index.html">PointMe<span>.live</span></a>
+  <button class="nav-toggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+  <ul class="nav-links">
+    <li><a href="../index.html">Home</a></li><li><a href="../about.html">About</a></li>
+    <li><a href="../how-to-use.html">How to Use</a></li><li><a href="../qibla-finder.html">Qibla</a></li>
+    <li><a href="../full-screen.html">Full-Screen</a></li><li><a href="../blog.html">Blog</a></li>
+    <li><a href="../contact.html">Contact</a></li><li><a href="../privacy-policy.html">Privacy</a></li>
+  </ul>
+</nav>
+
+<main class="page-content narrow">
+  <a class="back-link" href="../blog.html">← Back to Blog</a>
+
+  <div class="article-header">
+    <div class="date">February 18, 2026 · 8 min read</div>
+    <h1>How Accurate Are Phone Compasses?</h1>
+    <p>Modern smartphones contain tiny magnetometer chips capable of detecting Earth's magnetic field. But how accurate are they really — and what degrades that accuracy?</p>
+  </div>
+
+  <div class="article-body">
+
+    <h2>The Hardware Inside Your Phone</h2>
+    <p>Every modern smartphone contains a three-axis magnetometer — a chip that measures the strength and direction of magnetic fields along X, Y, and Z axes. Popular sensors come from companies like AKM Semiconductor (AK09918), ST Microelectronics (LSM303), and Asahi Kasei. These are MEMS (Micro-Electro-Mechanical Systems) devices, measuring just a few millimeters across.</p>
+    <p>The chip measures magnetic field strength in microteslas (µT). Earth's magnetic field is typically 25–65 µT depending on your location. Your phone's software then uses these three-axis readings, combined with the accelerometer (to know which way is "down"), to calculate a compass heading in degrees.</p>
+
+    <h2>Typical Accuracy Ranges</h2>
+    <p>Under ideal conditions — outdoors, away from interference, fully calibrated — modern smartphone compasses typically achieve:</p>
+    <ul>
+      <li><strong>High-end phones (iPhone 14+, Samsung Galaxy S23+):</strong> ±2–5° accuracy</li>
+      <li><strong>Mid-range phones:</strong> ±5–10° accuracy</li>
+      <li><strong>Budget phones:</strong> ±10–20° or more, with higher variance</li>
+    </ul>
+    <p>For casual orientation — finding which direction is roughly North, or getting a street-level bearing — even ±10° is perfectly usable. For precise navigation, the margins matter more.</p>
+
+    <h2>What Causes Compass Errors?</h2>
+
+    <h3>1. Magnetic Interference (The Biggest Factor)</h3>
+    <p>Any magnetic material near your phone will distort readings. Common culprits include magnetic phone cases, wallet card holders with magnets, metal desks, speaker systems, and even the steel reinforcement in building walls. The effect can be dramatic — introducing errors of 30–90° in extreme cases.</p>
+    <p><strong>Fix:</strong> Remove magnetic accessories. Step away from metal furniture and electronics. Re-calibrate.</p>
+
+    <h3>2. Calibration State</h3>
+    <p>Phone magnetometers require periodic calibration to compensate for the phone's own magnetic field (from the battery, speakers, and motors). When uncalibrated, readings drift significantly. The figure-8 motion works by exposing the sensor to a full range of magnetic orientations, allowing the firmware to compute and cancel the phone's own magnetic offset (called "hard iron" distortion).</p>
+    <p><strong>Fix:</strong> Perform the figure-8 calibration movement when accuracy seems off, or whenever you change environments significantly.</p>
+
+    <h3>3. Tilt and Orientation</h3>
+    <p>Compass readings are most accurate when the phone is held horizontal (flat, face up). When tilted, the firmware must use the accelerometer to apply "tilt compensation" — correcting the 3D magnetic reading for the phone's angle. This tilt compensation introduces its own small errors, which compound as the tilt increases.</p>
+    <p><strong>Fix:</strong> Hold your phone as flat and level as possible when taking a compass reading.</p>
+
+    <h3>4. GPS and Cellular Interference</h3>
+    <p>Active GPS and cellular radios generate small electromagnetic fields that can affect the nearby magnetometer. The effect is small (typically 1–3°) but measurable. Some phones apply software corrections; others don't.</p>
+
+    <h3>5. Magnetic Declination</h3>
+    <p>This isn't a compass error per se — it's the difference between magnetic North (what the compass reads) and true geographic North. This varies by location from 0° to over 20° in some regions. Most phone mapping apps automatically apply declination correction, but raw compass tools like PointMe.live show magnetic North. See our article on <a href="./magnetic-declination-explained.html">magnetic declination</a> for more.</p>
+
+    <h2>iOS vs Android: Does It Matter?</h2>
+    <p>The hardware difference between iOS and Android is less important than the device tier. A premium Android phone will generally outperform a budget iPhone in compass accuracy, and vice versa. What does differ is software implementation — Apple's CoreMotion framework applies more sophisticated sensor fusion and calibration algorithms, which often results in smoother, more stable compass readings compared to raw DeviceOrientation API readings on Android.</p>
+    <p>For browser-based compass tools like PointMe.live, iOS also provides <code>webkitCompassHeading</code> — a pre-processed compass value — while Android exposes raw alpha rotation, which requires additional computation to convert to a magnetic heading.</p>
+
+    <h2>Can a Phone Replace a Traditional Compass?</h2>
+    <p>For casual use — finding North on a city walk, checking which direction a room faces, Qibla direction, rough trail orientation — absolutely. For backcountry navigation where a wrong turn could be dangerous, the answer is more nuanced: a phone compass is a useful backup, but shouldn't be your sole navigation tool. Battery life, magnetic interference, and sensor failure are all real risks in the field.</p>
+    <p>Bottom line: phone compasses are impressively accurate for a chip that costs under $2 and fits in a millimeter of space. Understand their limitations, calibrate regularly, and they'll serve you well.</p>
+
+    <div class="info-box" style="margin-top:28px;">
+      <strong>Try it yourself:</strong> Open <a href="../index.html">PointMe.live</a> on your phone, start the compass, and compare it against Google Maps' compass. You'll likely see they agree within a few degrees — both are reading from the same magnetometer chip.
+    </div>
+
+  </div>
+
+  <hr class="section-divider"/>
+  <div class="flex-center">
+    <a href="../index.html" class="btn btn-primary">Open the Compass</a>
+    <a href="../blog.html" class="btn btn-outline">More Articles</a>
+  </div>
+</main>
+
+<!-- Ad slot -->
+<!-- <div class="ad-slot">INSERT ADSENSE UNIT</div> -->
+
+<footer class="site-footer">
+  <ul class="footer-nav">
+    <li><a href="../index.html">Home</a></li><li><a href="../about.html">About</a></li>
+    <li><a href="../blog.html">Blog</a></li><li><a href="../contact.html">Contact</a></li>
+    <li><a href="../privacy-policy.html">Privacy Policy</a></li><li><a href="../terms-of-service.html">Terms</a></li>
+    <li><a href="../disclaimer.html">Disclaimer</a></li>
+  </ul>
+  <p class="footer-disclaimer">Informational tool only. Accuracy depends on device sensors and calibration. Not for navigation-critical use.</p>
+  <p class="footer-copy">© 2026 PointMe.live</p>
+</footer>
+<script src="../scripts.js"></script>
+</body>
+</html>
