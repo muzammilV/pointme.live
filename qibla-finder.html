@@ -3,92 +3,417 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
-  <title>Qibla Finder — Find Mecca Direction Online | PointMe.live</title>
-  <meta name="description" content="Free online Qibla direction finder. Uses your GPS location to calculate the exact bearing toward Mecca. Works in any mobile browser, no app needed."/>
+
+  <!-- ===== SEO ===== -->
+  <title>Qibla Finder Online — Find Mecca Direction Free | PointMe.live</title>
+  <meta name="description" content="Find Qibla direction instantly using your phone GPS and compass. Free online Qibla finder — no app needed. Works on iPhone and Android. Accurate direction toward the Kaaba in Mecca."/>
+  <meta name="keywords" content="qibla finder, qibla direction, find qibla, mecca direction, qibla compass, online qibla, qibla online, which direction is qibla, qibla from my location, kaaba direction"/>
   <meta name="robots" content="index, follow"/>
   <link rel="canonical" href="https://pointme.live/qibla-finder.html"/>
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Qibla Finder — Free Online Direction to Mecca"/>
+  <meta property="og:description" content="Find the exact Qibla direction from your current location. Uses GPS and phone compass. No app needed."/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:url" content="https://pointme.live/qibla-finder.html"/>
+
+  <!-- WebApp Schema -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Qibla Finder — PointMe.live",
+    "url": "https://pointme.live/qibla-finder.html",
+    "description": "Free browser-based Qibla direction finder. Uses GPS and device compass to calculate the direction toward the Kaaba in Mecca for any location worldwide.",
+    "applicationCategory": "UtilitiesApplication",
+    "operatingSystem": "Any",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "featureList": ["GPS-based Qibla calculation","Live compass needle","Works on iPhone and Android","No app download required"]
+  }
+  </script>
+
+  <!-- FAQ Schema -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "How do I find my Qibla direction online?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Open PointMe.live/qibla-finder on your phone, tap Find My Qibla, allow GPS and compass access, and the gold arrow points toward the Kaaba in Mecca instantly." }
+      },
+      {
+        "@type": "Question",
+        "name": "Is this Qibla finder accurate?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Yes. It uses GPS coordinates and the great-circle bearing formula to calculate the precise direction to the Kaaba (21.4225N, 39.8262E). Accuracy is typically within 2-5 degrees on modern smartphones." }
+      },
+      {
+        "@type": "Question",
+        "name": "Does the Qibla finder work without internet?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Once loaded, the compass and GPS both work offline. You only need internet to initially load the page." }
+      },
+      {
+        "@type": "Question",
+        "name": "Which direction is Qibla from my location?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Qibla direction varies by location. From the US it is roughly northeast, from the UK southeast, from Southeast Asia northwest. Use this tool for your exact bearing." }
+      }
+    ]
+  }
+  </script>
+
+  <meta name="theme-color" content="#0a0800"/>
   <link rel="stylesheet" href="styles.css"/>
+
   <style>
-    main {
-      flex:1; display:flex; flex-direction:column;
-      align-items:center; justify-content:center;
-      padding: 24px 20px 48px; gap:0;
+    /* =========================================
+       QIBLA PAGE — Sacred Gold + Deep Dark
+       ========================================= */
+    :root {
+      --gold:        #c9a84c;
+      --gold-bright: #f0c060;
+      --gold-dim:    #8a6a28;
+      --gold-glow:   rgba(201,168,76,0.28);
+      --gold-bg:     rgba(201,168,76,0.07);
+      --deep:        #070706;
     }
 
-    /* Qibla arrow overlay */
+    body { background: var(--deep); overflow-x: hidden; }
+
+    /* Subtle geometric background pattern */
+    body::after {
+      content: '';
+      position: fixed; inset: 0;
+      background-image:
+        repeating-linear-gradient(60deg,  rgba(201,168,76,0.022) 0, transparent 1px, transparent 42px),
+        repeating-linear-gradient(-60deg, rgba(201,168,76,0.022) 0, transparent 1px, transparent 42px);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Nav gold override */
+    .site-nav { background: rgba(7,7,6,0.97); border-bottom-color: rgba(201,168,76,0.14); }
+    .nav-logo { color: var(--gold-bright); text-shadow: 0 0 14px var(--gold-glow); }
+    .nav-logo span { color: rgba(201,168,76,0.35); font-weight:400; }
+    .nav-links a:hover, .nav-links a.active { color: var(--gold-bright); background: var(--gold-bg); }
+    .nav-toggle span { background: var(--gold); }
+    #fsBtn { display:none; } /* hide on this page */
+
+    /* ===== HERO ===== */
+    .q-hero {
+      position: relative; z-index: 1;
+      text-align: center;
+      padding: 28px 20px 0;
+    }
+    .q-badge {
+      display: inline-flex; align-items: center; gap: 7px;
+      font-size: 0.66rem; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--gold-dim);
+      border: 1px solid rgba(201,168,76,0.18);
+      border-radius: 20px; padding: 5px 14px;
+      margin-bottom: 12px;
+    }
+    .q-badge em { color: var(--gold-bright); font-style:normal; }
+    .q-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(1.9rem, 7vw, 3rem);
+      font-weight: 900; letter-spacing: 0.06em;
+      color: var(--gold-bright);
+      text-shadow: 0 0 30px var(--gold-glow), 0 0 70px rgba(201,168,76,0.08);
+      margin-bottom: 6px; line-height: 1.1;
+    }
+    .q-subtitle {
+      font-size: 0.78rem; letter-spacing: 0.16em;
+      text-transform: uppercase; color: var(--gold-dim);
+    }
+
+    /* ===== KAABA IMAGE ===== */
+    .kaaba-section {
+      position: relative; z-index: 1;
+      display: flex; justify-content: center;
+      padding: 18px 20px 0;
+    }
+    .kaaba-frame {
+      position: relative;
+      width: min(340px, 90vw);
+      border-radius: 10px; overflow: hidden;
+      border: 1px solid rgba(201,168,76,0.22);
+      box-shadow: 0 0 0 1px rgba(201,168,76,0.05), 0 20px 60px rgba(0,0,0,0.65), 0 0 50px rgba(201,168,76,0.05);
+    }
+    .kaaba-img {
+      width: 100%; height: 190px;
+      object-fit: cover; object-position: center 35%;
+      display: block;
+      filter: saturate(0.8) brightness(0.78) sepia(0.1);
+    }
+    /* Fade bottom to black */
+    .kaaba-frame::after {
+      content: '';
+      position: absolute; bottom: 0; left: 0; right: 0;
+      height: 65%;
+      background: linear-gradient(to top, var(--deep) 0%, transparent 100%);
+      pointer-events: none;
+    }
+    /* Gold border glow on top/sides only */
+    .kaaba-frame::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+      border-radius: 10px;
+      box-shadow: inset 0 0 30px rgba(201,168,76,0.04);
+      z-index: 1; pointer-events: none;
+    }
+    .kaaba-caption {
+      position: absolute; bottom: 10px; left: 0; right: 0;
+      text-align: center; z-index: 2;
+      font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase;
+      color: rgba(201,168,76,0.45);
+    }
+    /* SVG fallback */
+    .kaaba-fallback {
+      display: none; width: 100%; height: 190px;
+      background: linear-gradient(135deg,#0f0e0a,#1a1608);
+      align-items: center; justify-content: center;
+      flex-direction: column; gap: 10px;
+    }
+    .kaaba-fallback-label {
+      font-size: 0.68rem; letter-spacing: 0.2em;
+      text-transform: uppercase; color: rgba(201,168,76,0.38);
+    }
+
+    /* ===== COMPASS SECTION ===== */
+    .compass-section {
+      position: relative; z-index: 1;
+      display: flex; flex-direction: column;
+      align-items: center; padding: 14px 20px 0;
+    }
+
+    /* Gold compass ring */
+    .compass-ring {
+      border-color: rgba(201,168,76,0.16) !important;
+      background: radial-gradient(ellipse at center, #0c0b08 55%, #110f0a 100%) !important;
+      box-shadow: 0 0 50px rgba(201,168,76,0.05), inset 0 0 40px rgba(0,0,0,0.5) !important;
+    }
+
+    /* Qibla gold arrow */
     #qiblaArrow {
-      position: absolute;
-      left: 50%; top: 50%;
-      width: 8px;
-      height: 44%;
+      position: absolute; left: 50%; top: 50%;
+      width: 10px; height: 43%;
       transform-origin: bottom center;
       transform: translateX(-50%) translateY(-100%) rotate(0deg);
-      transition: transform 0.15s linear;
-      pointer-events: none;
-      z-index: 5;
+      transition: transform 0.12s linear;
+      pointer-events: none; z-index: 6;
+      opacity: 0; transition: opacity 0.5s ease, transform 0.12s linear;
     }
+    #qiblaArrow.visible { opacity: 1; }
     .qibla-tip {
-      width: 100%;
-      height: 60%;
-      background: linear-gradient(to top, #cc8800, #ffcc00);
-      clip-path: polygon(50% 0%, 100% 100%, 50% 78%, 0% 100%);
-      filter: drop-shadow(0 0 6px rgba(255,200,0,0.6));
+      width: 100%; height: 65%;
+      background: linear-gradient(to top, var(--gold-dim), var(--gold-bright));
+      clip-path: polygon(50% 0%, 100% 100%, 50% 75%, 0% 100%);
+      filter: drop-shadow(0 0 8px rgba(201,168,76,0.75));
     }
     .qibla-tail {
-      width: 100%;
-      height: 40%;
-      background: rgba(255,200,0,0.3);
-      clip-path: polygon(50% 100%, 0% 0%, 50% 22%, 100% 0%);
+      width: 100%; height: 35%;
+      background: rgba(201,168,76,0.22);
+      clip-path: polygon(50% 100%, 0% 0%, 50% 25%, 100% 0%);
     }
 
+    /* Center dot / Kaaba icon */
+    .center-dot-q {
+      position: absolute; width: 14px; height: 14px;
+      border-radius: 50%; background: var(--gold);
+      top: 50%; left: 50%;
+      transform: translate(-50%,-50%);
+      box-shadow: 0 0 8px var(--gold), 0 0 20px var(--gold-glow);
+      z-index: 10;
+    }
+    .center-kaaba {
+      position: absolute; width: 28px; height: 28px;
+      top: 50%; left: 50%;
+      transform: translate(-50%,-50%);
+      z-index: 10; display: none;
+    }
+    .center-kaaba.visible { display: block; }
+
+    /* ===== DATA ===== */
+    .q-data {
+      text-align: center; margin-top: 14px;
+    }
+    .q-deg {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(3rem, 13vw, 4.8rem);
+      font-weight: 700; line-height: 1;
+      color: var(--gold-bright);
+      text-shadow: 0 0 30px var(--gold-glow);
+      letter-spacing: 0.04em;
+    }
+    .q-label {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(0.85rem, 3vw, 1.2rem);
+      color: var(--gold-dim); letter-spacing: 0.22em;
+      text-transform: uppercase; margin-top: 2px;
+    }
+    .q-compass-small {
+      font-size: 0.72rem; color: rgba(0,255,65,0.3);
+      letter-spacing: 0.12em; margin-top: 4px;
+    }
+
+    /* ===== STATUS ===== */
+    #qiblaStatus {
+      font-size: 0.75rem; color: var(--gold-dim);
+      letter-spacing: 0.1em; text-align: center;
+      margin-top: 10px; min-height: 1.2em; max-width: 320px;
+    }
+
+    /* ===== BUTTON ===== */
+    .btn-qibla {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: linear-gradient(135deg, #7a5520, var(--gold));
+      color: #08060000;
+      background-clip: text;
+      -webkit-background-clip: text;
+      background: var(--gold);
+      color: #08060a;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.85rem; font-weight: 900;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      border: none; border-radius: 6px;
+      padding: 15px 34px; cursor: pointer;
+      box-shadow: 0 0 24px var(--gold-glow), 0 4px 20px rgba(0,0,0,0.5);
+      transition: box-shadow 0.2s, transform 0.1s;
+      margin-top: 16px;
+    }
+    .btn-qibla:hover {
+      box-shadow: 0 0 40px rgba(201,168,76,0.55), 0 4px 30px rgba(0,0,0,0.5);
+      transform: translateY(-1px);
+    }
+    .btn-qibla:active { transform: translateY(0); }
+    .btn-qibla.hidden { display: none !important; }
+
+    /* ===== LOCATION CARD ===== */
+    .loc-card {
+      display: none;
+      background: var(--gold-bg);
+      border: 1px solid rgba(201,168,76,0.15);
+      border-radius: 8px; padding: 12px 20px;
+      margin-top: 14px; text-align: center;
+      font-size: 0.72rem; color: var(--gold-dim);
+      letter-spacing: 0.09em; width: 100%; max-width: 320px;
+    }
+    .loc-card.visible { display: block; }
+    .loc-card strong { color: var(--gold-bright); }
+
+    /* ===== LEGEND ===== */
     .legend {
-      display: flex;
-      gap: 20px;
-      margin-top: 14px;
-      justify-content: center;
-      flex-wrap: wrap;
+      display: flex; gap: 18px; margin-top: 12px;
+      justify-content: center; flex-wrap: wrap;
     }
     .legend-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 0.75rem;
-      color: var(--text-muted);
+      display: flex; align-items: center; gap: 7px;
+      font-size: 0.7rem; color: rgba(201,168,76,0.4);
+      letter-spacing: 0.07em;
     }
-    .legend-dot {
-      width: 12px; height: 12px;
-      border-radius: 50%;
-    }
-    .dot-red { background: var(--red); }
-    .dot-yellow { background: #ffcc00; }
+    .leg-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink:0; }
+    .leg-red   { background: #ff3030; }
+    .leg-gold  { background: var(--gold-bright); }
 
-    #qiblaDeg {
-      font-family: var(--font-display);
-      font-size: clamp(1.5rem, 6vw, 2.2rem);
-      font-weight: 700;
-      color: #ffcc00;
-      text-shadow: 0 0 20px rgba(255,200,0,0.3);
-      margin-top: 4px;
-      letter-spacing: 0.08em;
+    #calibHintQ {
+      font-size: 0.67rem; color: var(--gold-dim);
+      text-align: center; margin-top: 6px;
+      opacity: 0; letter-spacing: 0.1em;
+      transition: opacity 0.6s;
     }
-    #qiblaLabel {
-      font-size: 0.78rem;
-      color: var(--text-muted);
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-    }
+    #calibHintQ.visible { opacity: 1; }
 
-    .location-info {
-      font-size: 0.72rem;
-      color: var(--text-muted);
-      margin-top: 10px;
-      text-align: center;
-      letter-spacing: 0.08em;
+    /* ===== INFO SECTIONS ===== */
+    .info-wrap {
+      position: relative; z-index: 1;
+      max-width: 760px; margin: 0 auto;
+      padding: 40px 24px 0;
+    }
+    .info-wrap h2 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(1rem,3.5vw,1.45rem);
+      color: var(--gold-bright); margin-bottom: 12px;
+      letter-spacing: 0.04em;
+    }
+    .info-wrap p, .info-wrap li {
+      color: rgba(201,168,76,0.62);
+      font-size: 0.86rem; line-height: 1.75;
+    }
+    .info-wrap ul { list-style: '✦ '; padding-left: 1.4rem; }
+    .info-wrap li { margin-bottom: 5px; }
+    .i-divider { border:none; border-top: 1px solid rgba(201,168,76,0.1); margin: 30px 0; }
+
+    /* Steps grid */
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px,1fr));
+      gap: 12px; margin-top: 14px;
+    }
+    .step-card {
+      background: var(--gold-bg);
+      border: 1px solid rgba(201,168,76,0.11);
+      border-radius: 8px; padding: 16px; text-align: center;
+    }
+    .step-num {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.5rem; font-weight: 900;
+      color: var(--gold-bright); opacity: 0.35;
+      line-height: 1; margin-bottom: 6px;
+    }
+    .step-card p { font-size: 0.77rem; color: rgba(201,168,76,0.58); margin:0; }
+
+    /* Reference table */
+    .q-table {
+      width: 100%; border-collapse: collapse;
+      font-size: 0.82rem; margin-top: 14px;
+    }
+    .q-table th {
+      font-family: 'Orbitron', sans-serif; font-size: 0.62rem;
+      letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--gold-dim); padding: 8px 12px; text-align: left;
+      border-bottom: 1px solid rgba(201,168,76,0.14);
+    }
+    .q-table td {
+      padding: 10px 12px; color: rgba(201,168,76,0.6);
+      border-bottom: 1px solid rgba(201,168,76,0.06);
+    }
+    .q-table tr:last-child td { border-bottom: none; }
+    .q-table td:first-child { color: var(--gold-bright); font-weight: 700; }
+    .q-table tr:hover td { background: rgba(201,168,76,0.03); }
+
+    /* FAQ */
+    .faq-q { font-family:'Orbitron',sans-serif; font-size:0.86rem; color:var(--gold-bright); margin-bottom:6px; }
+    .faq-a { font-size:0.82rem; color:rgba(201,168,76,0.58); margin:0; }
+    .faq-row { border-bottom:1px solid rgba(201,168,76,0.1); padding:16px 0; }
+    .faq-row:last-child { border-bottom:none; }
+
+    /* Bottom CTA */
+    .bottom-cta {
+      background: var(--gold-bg);
+      border: 1px solid rgba(201,168,76,0.14);
+      border-radius: 10px; padding: 28px 20px;
+      text-align: center; margin: 32px 0 0;
+    }
+    .bottom-cta h2 { margin-bottom: 8px; }
+    .bottom-cta p { margin-bottom: 16px; }
+
+    /* Footer override */
+    .site-footer { border-top-color: rgba(201,168,76,0.1); margin-top: 48px; }
+    .footer-nav a:hover { color: var(--gold-bright); }
+    .footer-disclaimer, .footer-copy { color: rgba(201,168,76,0.2); }
+
+    .ad-wrap { max-width:728px; margin:28px auto 0; padding:0 24px; }
+
+    @media (max-width:480px) {
+      .kaaba-img { height:155px; }
+      .steps-grid { grid-template-columns: repeat(2,1fr); }
     }
   </style>
 </head>
 <body>
 
+<!-- NAV -->
 <nav class="site-nav" role="navigation" aria-label="Main navigation">
   <a class="nav-logo" href="./index.html">PointMe<span>.live</span></a>
   <button class="nav-toggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
@@ -96,98 +421,232 @@
     <li><a href="./index.html">Home</a></li>
     <li><a href="./about.html">About</a></li>
     <li><a href="./how-to-use.html">How to Use</a></li>
-    <li><a href="./qibla-finder.html">Qibla</a></li>
+    <li><a href="./qibla-finder.html" class="active">Qibla</a></li>
     <li><a href="./full-screen.html">Full-Screen</a></li>
     <li><a href="./blog.html">Blog</a></li>
     <li><a href="./contact.html">Contact</a></li>
     <li><a href="./privacy-policy.html">Privacy</a></li>
-    <li><a href="./terms-of-service.html">Terms</a></li>
   </ul>
 </nav>
-<button id="fsBtn" title="Fullscreen" aria-label="Toggle fullscreen">⛶</button>
 
-<main>
-  <div class="hero" style="margin-bottom:4px;">
-    <div class="hero-logo" style="font-size:clamp(1.4rem,5vw,2rem);">🕌 Qibla Finder</div>
-    <div class="hero-tagline">Direction toward Mecca · Uses GPS + Compass</div>
+<!-- HERO -->
+<div class="q-hero">
+  <div class="q-badge">🕌 <em>Free · Instant · No App</em> · Qibla Direction Finder</div>
+  <h1 class="q-title">Qibla Finder</h1>
+  <p class="q-subtitle">Find the direction to the Holy Kaaba from anywhere on Earth</p>
+</div>
+
+<!-- KAABA IMAGE -->
+<div class="kaaba-section">
+  <div class="kaaba-frame">
+    <img
+      class="kaaba-img"
+      src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Kaaba_at_night.jpg/640px-Kaaba_at_night.jpg"
+      alt="The Holy Kaaba at Masjid al-Haram in Mecca, Saudi Arabia — the Qibla direction for Muslims worldwide"
+      loading="eager"
+      onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+    />
+    <div class="kaaba-fallback">
+      <svg width="52" height="52" viewBox="0 0 52 52" fill="none">
+        <rect x="10" y="20" width="32" height="24" fill="rgba(201,168,76,0.25)" stroke="rgba(201,168,76,0.55)" stroke-width="1.5"/>
+        <rect x="20" y="32" width="12" height="12" fill="rgba(201,168,76,0.12)" stroke="rgba(201,168,76,0.4)" stroke-width="1"/>
+        <line x1="10" y1="20" x2="26" y2="8" stroke="rgba(201,168,76,0.5)" stroke-width="1.5"/>
+        <line x1="42" y1="20" x2="26" y2="8" stroke="rgba(201,168,76,0.5)" stroke-width="1.5"/>
+        <circle cx="26" cy="6" r="3" fill="rgba(201,168,76,0.6)"/>
+      </svg>
+      <span class="kaaba-fallback-label">The Holy Kaaba · Mecca</span>
+    </div>
+    <div class="kaaba-caption">The Holy Kaaba · Masjid al-Haram · Mecca, Saudi Arabia</div>
   </div>
+</div>
 
-  <!-- Compass with Qibla overlay -->
-  <div class="compass-wrapper" role="img" aria-label="Qibla compass">
+<!-- COMPASS -->
+<div class="compass-section">
+
+  <div class="compass-wrapper" role="img" aria-label="Qibla compass showing direction toward Mecca" style="width:min(300px,82vw);height:min(300px,82vw);">
     <div class="compass-ring"></div>
+
     <svg id="compassRose" viewBox="0 0 360 360" xmlns="http://www.w3.org/2000/svg">
       <defs>
-        <filter id="glow">
-          <feGaussianBlur stdDeviation="3" result="b"/>
-          <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
-        </filter>
+        <filter id="gG"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
       </defs>
       <g id="compassRose-ticks"></g>
-      <text x="180" y="34" text-anchor="middle" dominant-baseline="middle"
-        font-family="Orbitron,sans-serif" font-size="22" font-weight="900"
-        fill="#00ff41" filter="url(#glow)">N</text>
-      <text x="180" y="332" text-anchor="middle" dominant-baseline="middle"
-        font-family="Orbitron,sans-serif" font-size="16" fill="rgba(0,255,65,0.5)">S</text>
-      <text x="330" y="183" text-anchor="middle" dominant-baseline="middle"
-        font-family="Orbitron,sans-serif" font-size="16" fill="rgba(0,255,65,0.5)">E</text>
-      <text x="30"  y="183" text-anchor="middle" dominant-baseline="middle"
-        font-family="Orbitron,sans-serif" font-size="16" fill="rgba(0,255,65,0.5)">W</text>
+      <text transform="translate(180,36)" text-anchor="middle" dominant-baseline="middle"
+        font-family="Orbitron,sans-serif" font-size="20" font-weight="900"
+        fill="#00ff41" filter="url(#gG)">N</text>
+      <text transform="translate(180,330)" text-anchor="middle" dominant-baseline="middle"
+        font-family="Orbitron,sans-serif" font-size="14" fill="rgba(0,255,65,0.4)">S</text>
+      <text transform="translate(327,183)" text-anchor="middle" dominant-baseline="middle"
+        font-family="Orbitron,sans-serif" font-size="14" fill="rgba(0,255,65,0.4)">E</text>
+      <text transform="translate(33,183)" text-anchor="middle" dominant-baseline="middle"
+        font-family="Orbitron,sans-serif" font-size="14" fill="rgba(0,255,65,0.4)">W</text>
+      <text transform="translate(290,70)" text-anchor="middle" dominant-baseline="middle"
+        font-family="Orbitron,sans-serif" font-size="9" fill="rgba(0,255,65,0.22)">NE</text>
+      <text transform="translate(290,293)" text-anchor="middle" dominant-baseline="middle"
+        font-family="Orbitron,sans-serif" font-size="9" fill="rgba(0,255,65,0.22)">SE</text>
+      <text transform="translate(70,293)" text-anchor="middle" dominant-baseline="middle"
+        font-family="Orbitron,sans-serif" font-size="9" fill="rgba(0,255,65,0.22)">SW</text>
+      <text transform="translate(70,70)" text-anchor="middle" dominant-baseline="middle"
+        font-family="Orbitron,sans-serif" font-size="9" fill="rgba(0,255,65,0.22)">NW</text>
     </svg>
 
-    <!-- Standard red/white needle -->
+    <!-- Standard red/white North needle -->
     <div id="needle">
       <div class="needle-north"></div>
       <div class="needle-south"></div>
     </div>
 
-    <!-- Qibla gold arrow -->
+    <!-- Gold Qibla arrow -->
     <div id="qiblaArrow">
       <div class="qibla-tip"></div>
       <div class="qibla-tail"></div>
     </div>
 
-    <div class="center-dot"></div>
+    <!-- Center: dot before start, Kaaba icon after -->
+    <div class="center-dot-q" id="centerDot"></div>
+    <div class="center-kaaba" id="centerKaaba" aria-hidden="true">
+      <svg viewBox="0 0 28 28" fill="none">
+        <rect x="4" y="11" width="20" height="14" fill="rgba(201,168,76,0.45)" stroke="#c9a84c" stroke-width="1.2"/>
+        <rect x="10" y="19" width="8" height="6" fill="rgba(201,168,76,0.18)" stroke="#c9a84c" stroke-width="0.8"/>
+        <line x1="4" y1="11" x2="14" y2="4" stroke="#c9a84c" stroke-width="1.2"/>
+        <line x1="24" y1="11" x2="14" y2="4" stroke="#c9a84c" stroke-width="1.2"/>
+        <rect x="1" y="23" width="26" height="2" fill="rgba(201,168,76,0.25)" stroke="rgba(201,168,76,0.45)" stroke-width="0.8"/>
+      </svg>
+    </div>
   </div>
 
-  <!-- Qibla data -->
-  <div class="data-panel">
-    <div id="degreeDisplay">---°</div>
-    <div id="directionDisplay">Compass</div>
+  <!-- Data -->
+  <div class="q-data">
+    <div class="q-deg" id="qiblaDeg">---°</div>
+    <div class="q-label" id="qiblaLbl">to Mecca</div>
+    <div class="q-compass-small" id="compassSml">Compass: ---°</div>
   </div>
-  <div id="qiblaDeg">--- Qibla</div>
-  <div id="qiblaLabel">Calculating your direction to Mecca…</div>
-  <p id="statusMsg" style="text-align:center;font-size:.75rem;color:var(--text-muted);margin-top:8px;">
-    Tap Start to activate GPS + compass
-  </p>
 
-  <div class="flex-center mt-16">
-    <button id="startBtn" class="btn btn-primary">⊕ Start Qibla Finder</button>
+  <p id="qiblaStatus">Tap below to find your exact Qibla direction</p>
+
+  <button id="startBtn" class="btn-qibla" aria-label="Find my Qibla direction">
+    🕌 Find My Qibla
+  </button>
+
+  <div class="loc-card" id="locCard">
+    <strong id="locText">Locating…</strong><br/>
+    <span id="fromText">Calculating direction to Mecca…</span>
   </div>
 
   <div class="legend">
-    <div class="legend-item"><div class="legend-dot dot-red"></div> Red = Magnetic North</div>
-    <div class="legend-item"><div class="legend-dot dot-yellow"></div> Gold = Qibla direction</div>
+    <div class="legend-item"><div class="leg-dot leg-red"></div>Red = Magnetic North</div>
+    <div class="legend-item"><div class="leg-dot leg-gold"></div>Gold = Qibla direction</div>
   </div>
 
-  <div class="location-info" id="locationInfo"></div>
-  <div id="calibHint">↻ Figure-8 motion to recalibrate</div>
-</main>
-
-<div style="max-width:680px;margin:0 auto;padding:0 24px 32px;">
-  <div class="info-box">
-    <strong>How it works:</strong> Your GPS coordinates are used to calculate the <em>great-circle bearing</em> from your position to the Kaaba in Mecca (21.4225°N, 39.8262°E). The gold arrow rotates to point in that direction. The red needle always points magnetic North.
-  </div>
+  <div id="calibHintQ">↻ Move phone in figure-8 to recalibrate</div>
 </div>
 
-<!-- Ad slot -->
-<!-- <div class="ad-slot">INSERT ADSENSE UNIT</div> -->
+<!-- AD SLOT 1 -->
+<!--
+<div class="ad-wrap">
+  <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXX"
+    data-ad-slot="XXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins>
+</div>
+-->
+
+<!-- INFO SECTIONS -->
+<div class="info-wrap">
+
+  <h2>How to Find Your Qibla Direction</h2>
+  <div class="steps-grid">
+    <div class="step-card"><div class="step-num">01</div><p>Tap <strong style="color:var(--gold-bright)">Find My Qibla</strong> above</p></div>
+    <div class="step-card"><div class="step-num">02</div><p>Allow <strong style="color:var(--gold-bright)">GPS &amp; compass</strong> when prompted</p></div>
+    <div class="step-card"><div class="step-num">03</div><p>Hold phone <strong style="color:var(--gold-bright)">flat and level</strong></p></div>
+    <div class="step-card"><div class="step-num">04</div><p>Turn until <strong style="color:var(--gold-bright)">gold arrow</strong> points ahead</p></div>
+  </div>
+
+  <hr class="i-divider"/>
+
+  <h2>Approximate Qibla Directions by City</h2>
+  <p>Use this as a quick reference. The live tool above gives your exact bearing.</p>
+  <table class="q-table" aria-label="Qibla direction reference by city">
+    <thead>
+      <tr><th>City / Country</th><th>Qibla Bearing</th><th>Direction</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>New York, USA</td><td>58°</td><td>Northeast</td></tr>
+      <tr><td>London, UK</td><td>119°</td><td>Southeast</td></tr>
+      <tr><td>Paris, France</td><td>122°</td><td>Southeast</td></tr>
+      <tr><td>Istanbul, Turkey</td><td>154°</td><td>South-Southeast</td></tr>
+      <tr><td>Dubai, UAE</td><td>247°</td><td>West-Southwest</td></tr>
+      <tr><td>Karachi, Pakistan</td><td>270°</td><td>West</td></tr>
+      <tr><td>Mumbai, India</td><td>292°</td><td>West-Northwest</td></tr>
+      <tr><td>Kuala Lumpur, Malaysia</td><td>293°</td><td>West-Northwest</td></tr>
+      <tr><td>Jakarta, Indonesia</td><td>295°</td><td>West-Northwest</td></tr>
+      <tr><td>Lagos, Nigeria</td><td>62°</td><td>Northeast</td></tr>
+      <tr><td>Cairo, Egypt</td><td>136°</td><td>Southeast</td></tr>
+      <tr><td>Toronto, Canada</td><td>54°</td><td>Northeast</td></tr>
+      <tr><td>Dhaka, Bangladesh</td><td>278°</td><td>West</td></tr>
+      <tr><td>Tehran, Iran</td><td>195°</td><td>South-Southwest</td></tr>
+    </tbody>
+  </table>
+
+  <hr class="i-divider"/>
+
+  <h2>Frequently Asked Questions</h2>
+
+  <div class="faq-row">
+    <div class="faq-q">Is this Qibla finder accurate?</div>
+    <p class="faq-a">Yes. It uses your GPS coordinates and the spherical great-circle bearing formula to calculate the precise direction toward the Kaaba (21.4225°N, 39.8262°E). On modern smartphones in open areas, accuracy is typically within 2–5 degrees.</p>
+  </div>
+  <div class="faq-row">
+    <div class="faq-q">Does it work without internet?</div>
+    <p class="faq-a">Once the page is loaded, everything works fully offline. GPS operates independently of mobile data. Simply load the page before entering a low-signal area.</p>
+  </div>
+  <div class="faq-row">
+    <div class="faq-q">Why is the arrow spinning or wrong?</div>
+    <p class="faq-a">Magnetic interference is the usual cause — metal objects, electronics, or a magnetic phone case. Move away from these and perform the figure-8 calibration motion. Also hold the phone flat (face up), not tilted.</p>
+  </div>
+  <div class="faq-row">
+    <div class="faq-q">Does it work on iPhone?</div>
+    <p class="faq-a">Yes. Tap the button and choose Allow when iOS asks for motion sensor access. If the prompt doesn't appear, go to Settings → Safari → Motion &amp; Orientation Access and enable it.</p>
+  </div>
+  <div class="faq-row">
+    <div class="faq-q">Does it use the great-circle route to Mecca?</div>
+    <p class="faq-a">Yes. The calculation uses the great-circle bearing — the shortest path across Earth's surface — which is the method recommended by Islamic jurisprudence (fiqh) and used by all major Qibla applications.</p>
+  </div>
+
+  <hr class="i-divider"/>
+
+  <h2>About the Qibla Direction</h2>
+  <p>The Qibla (القبلة — "the direction") is the direction all Muslims face during the five daily prayers (Salah). It points toward the Kaaba, the cube-shaped structure at the heart of Masjid al-Haram in Mecca, Saudi Arabia — located at <strong style="color:var(--gold-bright)">21.4225°N, 39.8262°E</strong>.</p>
+  <p>Historically, scholars used celestial navigation — stars, sunrise and sunset positions, and the direction of prevailing winds — to determine Qibla. Today, GPS and digital magnetometers make it possible to get a precise bearing from anywhere on Earth within seconds, directly in your phone's browser.</p>
+  <ul>
+    <li>No app download or installation required</li>
+    <li>Your location data never leaves your device</li>
+    <li>Works on iPhone (Safari), Android (Chrome), and all modern mobile browsers</li>
+    <li>Free to use — always</li>
+  </ul>
+
+  <div class="bottom-cta">
+    <h2>Find Your Qibla Now</h2>
+    <p>Works on any smartphone browser. No download. No account. Just open and pray.</p>
+    <button class="btn-qibla" onclick="document.getElementById('startBtn').click(); window.scrollTo({top:0,behavior:'smooth'});">
+      🕌 Find My Qibla
+    </button>
+  </div>
+
+</div>
+
+<!-- AD SLOT 2 -->
+<!--
+<div class="ad-wrap" style="margin-bottom:32px;">
+  <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXX"
+    data-ad-slot="XXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins>
+</div>
+-->
 
 <footer class="site-footer">
   <ul class="footer-nav">
     <li><a href="./index.html">Home</a></li>
     <li><a href="./about.html">About</a></li>
     <li><a href="./how-to-use.html">How to Use</a></li>
-    <li><a href="./qibla-finder.html">Qibla</a></li>
+    <li><a href="./qibla-finder.html">Qibla Finder</a></li>
     <li><a href="./blog.html">Blog</a></li>
     <li><a href="./contact.html">Contact</a></li>
     <li><a href="./privacy-policy.html">Privacy Policy</a></li>
@@ -200,91 +659,98 @@
 
 <script src="scripts.js"></script>
 <script>
-  const rose       = document.getElementById('compassRose');
-  const needle     = document.getElementById('needle');
-  const qiblaArrow = document.getElementById('qiblaArrow');
-  const degEl      = document.getElementById('degreeDisplay');
-  const dirEl      = document.getElementById('directionDisplay');
-  const qiblaDegEl = document.getElementById('qiblaDeg');
-  const qiblaLabel = document.getElementById('qiblaLabel');
-  const statusEl   = document.getElementById('statusMsg');
-  const startBtn   = document.getElementById('startBtn');
-  const locInfo    = document.getElementById('locationInfo');
-  const calibEl    = document.getElementById('calibHint');
+/* ===== QIBLA COMPASS ENGINE ===== */
+const compassRose = document.getElementById('compassRose');
+const needle      = document.getElementById('needle');
+const qiblaArrow  = document.getElementById('qiblaArrow');
+const qiblaDegEl  = document.getElementById('qiblaDeg');
+const qiblaLblEl  = document.getElementById('qiblaLbl');
+const compassSml  = document.getElementById('compassSml');
+const statusEl    = document.getElementById('qiblaStatus');
+const startBtn    = document.getElementById('startBtn');
+const locCard     = document.getElementById('locCard');
+const locText     = document.getElementById('locText');
+const fromText    = document.getElementById('fromText');
+const calibEl     = document.getElementById('calibHintQ');
+const centerDot   = document.getElementById('centerDot');
+const centerKaaba = document.getElementById('centerKaaba');
 
-  let qiblaBearing = null;
-  let calibTimer = null;
+let qiblaBearing = null;
+let calibTimer   = null;
+let isRunning    = false;
 
-  buildCompassRoseTicks('compassRose');
-  initFullscreenBtn('fsBtn');
+buildCompassRoseTicks('compassRose');
 
-  function onHeading(h) {
-    const r = Math.round(h);
-    degEl.textContent = r + '°';
-    dirEl.textContent = headingToDir(r);
-    // Rose rotates opposite to heading
-    rose.style.transform = `rotate(${-h}deg)`;
-    // Standard needle stays fixed pointing North
-    needle.style.transform = `translateX(-50%) translateY(-100%) rotate(0deg)`;
+function onHeading(h) {
+  const r = Math.round(h);
+  compassSml.textContent = 'Compass: ' + r + '°';
 
-    if (qiblaBearing !== null) {
-      // Qibla arrow must point to qiblaBearing relative to current heading
-      // Offset = qiblaBearing - current heading (rose rotation corrects for heading)
-      // Since rose rotates -h, the arrow should be at qiblaBearing in world space
-      qiblaArrow.style.transform = `translateX(-50%) translateY(-100%) rotate(${qiblaBearing - h}deg)`;
-    }
+  // Rose rotates opposite to heading — North stays top
+  compassRose.style.transform = `rotate(${-h}deg)`;
 
-    if (!calibTimer) calibTimer = setTimeout(() => calibEl.classList.add('visible'), 3500);
+  // Standard needle always fixed (points North)
+  needle.style.transform = `translateX(-50%) translateY(-100%) rotate(0deg)`;
+
+  // Gold Qibla arrow: world-space Qibla bearing corrected for rose rotation
+  if (qiblaBearing !== null) {
+    const offset = qiblaBearing - h;
+    qiblaArrow.style.transform = `translateX(-50%) translateY(-100%) rotate(${offset}deg)`;
   }
 
-  function getLocation() {
-    return new Promise((resolve, reject) => {
-      if (!navigator.geolocation) {
-        reject(new Error('Geolocation not supported'));
-        return;
-      }
-      navigator.geolocation.getCurrentPosition(resolve, reject, {
-        enableHighAccuracy: true,
-        timeout: 10000
-      });
-    });
+  if (!calibTimer) calibTimer = setTimeout(() => calibEl.classList.add('visible'), 4000);
+}
+
+startBtn.addEventListener('click', async () => {
+  if (isRunning) {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    return;
   }
 
-  startBtn.addEventListener('click', async () => {
-    statusEl.textContent = 'Getting your location…';
+  statusEl.textContent = 'Getting your GPS location…';
 
-    // Step 1: Get GPS
-    let pos;
-    try {
-      pos = await getLocation();
-    } catch (e) {
-      statusEl.textContent = '⚠ Location access denied. Please allow location to use Qibla finder.';
-      return;
-    }
+  // Step 1: GPS
+  let pos;
+  try {
+    pos = await new Promise((res, rej) =>
+      navigator.geolocation
+        ? navigator.geolocation.getCurrentPosition(res, rej, { enableHighAccuracy: true, timeout: 12000 })
+        : rej(new Error('Geolocation not supported'))
+    );
+  } catch(e) {
+    statusEl.textContent = '⚠ Location access denied. Please allow GPS to use the Qibla finder.';
+    return;
+  }
 
-    const { latitude, longitude } = pos.coords;
-    qiblaBearing = calcQibla(latitude, longitude);
+  const { latitude, longitude } = pos.coords;
+  qiblaBearing = calcQibla(latitude, longitude);
 
-    locInfo.textContent = `Your location: ${latitude.toFixed(4)}°, ${longitude.toFixed(4)}°`;
-    qiblaDegEl.textContent = Math.round(qiblaBearing) + '° Qibla';
-    qiblaLabel.textContent = `Direction to Mecca from your location`;
+  const bearing = Math.round(qiblaBearing);
+  locText.innerHTML = `📍 <strong>${latitude.toFixed(4)}°, ${longitude.toFixed(4)}°</strong>`;
+  fromText.textContent = `Qibla is ${bearing}° from your location`;
+  locCard.classList.add('visible');
+  qiblaDegEl.textContent = bearing + '°';
+  qiblaLblEl.textContent = 'toward Mecca';
 
-    // Step 2: Start compass
-    statusEl.textContent = 'Starting compass…';
-    const ok = await startCompass({
-      onStatus: (m) => statusEl.textContent = m,
-      onPermissionGranted: () => {
-        startBtn.classList.add('hidden');
-        statusEl.textContent = '● LIVE — align gold arrow toward Mecca';
-      },
-      onHeading
-    });
-
-    if (ok && typeof DeviceOrientationEvent.requestPermission !== 'function') {
-      startBtn.classList.add('hidden');
-      statusEl.textContent = '● LIVE — align gold arrow toward Mecca';
-    }
+  // Step 2: Compass
+  statusEl.textContent = 'Starting compass…';
+  const ok = await startCompass({
+    onStatus: (m) => statusEl.textContent = m,
+    onPermissionGranted: () => activate(),
+    onHeading
   });
+
+  // Android / non-iOS auto-start
+  if (ok && typeof DeviceOrientationEvent.requestPermission !== 'function') activate();
+});
+
+function activate() {
+  startBtn.classList.add('hidden');
+  statusEl.textContent = '● LIVE — align the gold arrow toward Mecca';
+  isRunning = true;
+  qiblaArrow.classList.add('visible');
+  centerDot.style.display = 'none';
+  centerKaaba.classList.add('visible');
+}
 </script>
 </body>
 </html>
